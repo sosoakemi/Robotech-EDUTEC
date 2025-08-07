@@ -1,4 +1,6 @@
-# 🤖 RoboTech
+ <p align="center">
+  <img src="https://i.imgur.com/1tvElSc.png" alt="Logo RoboTech" width="150"/>
+</p> #RoboTech
 
 **RoboTech** é um site educacional desenvolvido por **Sophia Akemi, Sophia Santana, Luiz Henrique, Lara Freitas e Murillo Zanni**, com o objetivo de auxiliar programadores iniciantes a aprender, praticar e consolidar seus conhecimentos em programação de forma simples e acessível.
 
