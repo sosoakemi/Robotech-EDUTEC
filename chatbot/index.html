@@ -53,51 +53,7 @@
                 </div>
             </div>
             
-            <!-- Robochat Message 1 -->
-            <div class="message robochat-message">
-                <div class="message-avatar">
-                    <div class="robot-avatar">
-                        <img src="imagesChat/Ellipse 1 (1).png" alt="Robochat Avatar" class="avatar-img">
-                    </div>
-                </div>
-                <div class="message-content">
-                    <div class="message-header">
-                        <span class="sender-name">Robochat</span>
-                    </div>
-                    <div class="message-bubble">
-                        Olá! Eu sou o Robochat, seu assistente virtual. Estou aqui para ajudá-la com o que for necessário. Como posso ajuda-la hoje?
-                    </div>
-                    <div class="message-time">08:16 AM</div>
-                </div>
-            </div>
-            
-            <!-- User Message -->
-            <div class="message user-message">
-                <div class="message-content">
-                    <div class="message-bubble">
-                        Olá, o que é HTML?
-                    </div>
-                    <div class="message-time">08:15 AM</div>
-                </div>
-            </div>
-            
-            <!-- Robochat Message 2 -->
-            <div class="message robochat-message">
-                <div class="message-avatar">
-                    <div class="robot-avatar">
-                        <img src="imagesChat/Ellipse 1 (1).png" alt="Robochat Avatar" class="avatar-img">
-                    </div>
-                </div>
-                <div class="message-content">
-                    <div class="message-header">
-                        <span class="sender-name">Robochat</span>
-                    </div>
-                    <div class="message-bubble">
-                        HTML (HyperText Markup Language) é a Linguagem de Marcação de Hipertexto, usada para estruturar e apresentar conteúdo na web. Ele define a estrutura básica de páginas da internet, organizando textos, imagens, links e outros elementos que compõem um site.
-                    </div>
-                    <div class="message-time">08:17 AM</div>
-                </div>
-            </div>
+            <!-- Mensagens serão adicionadas dinamicamente aqui -->
         </div>
         
         <!-- Input Area -->
@@ -117,5 +73,87 @@
             </div>
         </div>
     </div>
+    
+    <script>
+const chatMessages = document.querySelector(".chat-messages");
+const messageInput = document.querySelector(".message-input");
+const sendBtn = document.querySelector(".send-btn");
+
+function addMessage(content, sender) {
+    const messageDiv = document.createElement("div");
+    messageDiv.classList.add("message", sender === "user" ? "user-message" : "robochat-message");
+
+    if (sender === "user") {
+        messageDiv.innerHTML = `
+            <div class="message-content">
+                <div class="message-bubble">${content}</div>
+                <div class="message-time">${new Date().toLocaleTimeString()}</div>
+            </div>
+        `;
+    } else {
+        messageDiv.innerHTML = `
+            <div class="message-avatar">
+                <div class="robot-avatar">
+                    <img src="imagesChat/Ellipse 1 (1).png" alt="Robochat Avatar" class="avatar-img">
+                </div>
+            </div>
+            <div class="message-content">
+                <div class="message-header">
+                    <span class="sender-name">Robochat</span>
+                </div>
+                <div class="message-bubble">${content}</div>
+                <div class="message-time">${new Date().toLocaleTimeString()}</div>
+            </div>
+        `;
+    }
+    
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+async function sendMessage() {
+    const text = messageInput.value.trim();
+    if (!text) return;
+
+    // Adiciona mensagem do usuário
+    addMessage(text, "user");
+    messageInput.value = "";
+
+    try {
+        const res = await fetch("http://localhost:3000/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message: text })
+        });
+
+        if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+        }
+
+        const data = await res.json();
+        
+        // Adiciona a resposta da IA
+        if (data.reply && data.reply.trim()) {
+            addMessage(data.reply, "bot");
+        } else {
+            addMessage("Desculpe, não consegui processar sua mensagem. Tente novamente.", "bot");
+        }
+    } catch (error) {
+        console.error("Erro:", error);
+        addMessage("❌ Erro ao conectar com o servidor. Verifique se o servidor está rodando em http://localhost:3000", "bot");
+    }
+}
+
+sendBtn.addEventListener("click", sendMessage);
+messageInput.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") sendMessage();
+});
+
+// Adiciona mensagem de boas-vindas quando a página carrega
+window.addEventListener("load", () => {
+    addMessage("Olá! Eu sou o Robochat, seu assistente virtual especializado em tecnologia e programação. Estou aqui para ajudá-lo com HTML, CSS, JavaScript, Python e muito mais! Como posso ajudá-lo hoje?", "bot");
+});
+</script>
+
 </body>
 </html>
