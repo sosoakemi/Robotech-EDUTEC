@@ -1,128 +1,38 @@
-# 🤖 RoboTech Project
+ <p align="center">
+  <img width="171" height="120" alt="Ativo 8 1 (1)" src="https://github.com/user-attachments/assets/2ee32661-107f-43a4-8d0b-f95332c28ec3" />
+</p> 
+<h1>RoboTech</h1>
 
-Um projeto completo de chatbot inteligente com interface moderna e integração com IA.
 
-## 📁 Estrutura do Projeto
 
-```
-RoboTech-Project/
-├── chatbot/                 # Chatbot com IA
-│   ├── index.html          # Interface do chat
-│   ├── styles.css          # Estilos CSS
-│   ├── server.js           # Servidor com Google Gemini
-│   ├── server-test.js      # Servidor de teste (sem API)
-│   ├── package.json        # Dependências
-│   ├── COMO_USAR.md        # Instruções de uso
-│   └── imagesChat/         # Imagens do chat
-├── images.home/            # Imagens da página inicial
-├── index.html              # Página inicial
-├── styles.css              # Estilos da página inicial
-└── README.md               # Este arquivo
-```
+**RoboTech** é um site educacional desenvolvido por **Sophia Akemi, Sophia Santana, Luiz Henrique, Lara Freitas e Murillo Zanni**, com o objetivo de auxiliar programadores iniciantes a aprender, praticar e consolidar seus conhecimentos em programação de forma simples e acessível.
 
-## 🚀 Funcionalidades
+O projeto foi criado como parte da iniciativa **EDUTEC**, um programa de dois anos da escola **UNASP**, voltado para o desenvolvimento de soluções tecnológicas com foco educacional. Iniciamos o desenvolvimento do RoboTech em **2024**, quando estávamos no **primeiro ano do ensino médio**, e concluímos em **2025**, no **segundo ano**, colocando em prática tudo o que aprendemos ao longo desse período.
 
-### Chatbot Inteligente
-- 💬 Interface de chat moderna e responsiva
-- 🤖 Integração com Google Gemini AI
-- 🎨 Design com gradientes e animações
-- 📱 Totalmente responsivo
-- ⚡ Indicador de digitação
-- 🔄 Mensagens em tempo real
+Durante esse processo, aplicamos conhecimentos em **HTML, CSS, JavaScript**, além de noções de **design, usabilidade, lógica de programação e trabalho em equipe**. O RoboTech representa não apenas o nosso crescimento técnico, mas também nosso comprometimento com a educação e a democratização do acesso ao conhecimento tecnológico.
 
-### Página Inicial
-- 🏠 Landing page moderna
-- 🎯 Seções informativas
-- 📱 Design responsivo
-- 🎨 Interface elegante
+## 🚀 Objetivos do RoboTech
+
+- Ajudar estudantes e autodidatas a darem seus primeiros passos na programação;
+- Fornecer exercícios práticos e conteúdos didáticos para reforçar o aprendizado;
+- Criar uma comunidade de aprendizado colaborativo;
+- Incentivar o uso da tecnologia como ferramenta de transformação educacional.
 
 ## 🛠️ Tecnologias Utilizadas
-
 - **Frontend:** HTML5, CSS3, JavaScript (ES6+)
 - **Backend:** Node.js, Express.js
 - **IA:** Google Generative AI (Gemini)
 - **Estilização:** CSS Grid, Flexbox, Gradientes
 - **Ícones:** Font Awesome
+- Ferramentas de prototipagem e design (Figma, Canva, etc.)
 
-## 🚀 Como Executar
+## 👩‍💻 Equipe
 
-### Pré-requisitos
-- Node.js instalado
-- Chave da API do Google Gemini (opcional)
+- Sophia Akemi  
+- Sophia Santana  
+- Luiz Henrique  
+- Lara Freitas  
+- Murillo Zanni
 
-### Passos
 
-1. **Clone o repositório:**
-   ```bash
-   git clone https://github.com/seu-usuario/RoboTech-Project.git
-   cd RoboTech-Project
-   ```
-
-2. **Instale as dependências:**
-   ```bash
-   cd chatbot
-   npm install
-   ```
-
-3. **Configure a API (opcional):**
-   - Obtenha uma chave em https://makersuite.google.com/app/apikey
-   - Edite `chatbot/server.js` e substitua a API_KEY
-
-4. **Execute o servidor:**
-   ```bash
-   # Para usar IA real (requer API key):
-   node server.js
-   
-   # Para teste (sem API key):
-   node server-test.js
-   ```
-
-5. **Abra no navegador:**
-   - Chatbot: `chatbot/index.html`
-   - Página inicial: `index.html`
-
-## 📖 Documentação
-
-- **Chatbot:** Veja `chatbot/COMO_USAR.md` para instruções detalhadas
-- **API:** Documentação da Google Gemini em https://ai.google.dev/
-
-## 🎨 Características do Design
-
-- **Tema Escuro:** Interface moderna com gradientes
-- **Responsivo:** Funciona em desktop, tablet e mobile
-- **Animações:** Transições suaves e efeitos hover
-- **Acessibilidade:** Design inclusivo e navegável
-
-## 🔧 Configuração
-
-### Variáveis de Ambiente
-```bash
-# Para usar IA real, configure no server.js:
-const API_KEY = "sua_chave_aqui";
-```
-
-### Personalização
-- Cores: Edite as variáveis CSS em `styles.css`
-- Imagens: Substitua arquivos em `imagesChat/` e `images.home/`
-- Textos: Modifique os textos nos arquivos HTML
-
-## 📝 Licença
-
-Este projeto está sob a licença MIT.
-
-## 🤝 Contribuição
-
-1. Faça um fork do projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
-3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
-4. Push para a branch (`git push origin feature/AmazingFeature`)
-5. Abra um Pull Request
-
-## 📞 Suporte
-
-Se você encontrar algum problema ou tiver dúvidas, abra uma issue no GitHub.
-
----
-
-Desenvolvido com ❤️ para demonstrar habilidades em desenvolvimento web e IA.
 
