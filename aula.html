@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap"rel="stylesheet" />
+  <link rel="stylesheet" href="aula.css">
+  <script src="./main.js" defer></script>
+  <title>Aulas</title>
+</head>
+
+<body>
+  <header class="cabecalho">
+    <div class="container navegacao">
+      <a href="../index.html" class="marca" aria-label="RoboTech">
+        <img src="logo 1 (2).png" alt="RoboTech" class="marca-imagem" />
+      </a>
+      <nav class="menu-principal">
+        <a href="index.html">Aulas</a>
+        <a href="../game/index.html">Game</a>
+        <a href="../blog/index.html">Blog</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main>
+    <div class="banner">
+      Aprimore suas habilidades <br>
+      com o nosso curso
+    </div>
+
+    <section id="aulas" class="aulas">
+      <h2>+ Aulas</h2>
+      <div class="grid">
+
+        <div class="card">
+          <div class="tag iniciante">INICIANTE</div>
+          <div class="title">Conheça as linguagens</div>
+        </div>
+
+        <div class="card">
+          <div class="tag iniciante">INICIANTE</div>
+          <div class="title">CSS</div>
+        </div>
+
+        <div class="card">
+          <div class="tag iniciante">INICIANTE</div>
+          <div class="title">Gamificação</div>
+        </div>
+
+        <div class="card">
+          <div class="tag iniciante">INICIANTE</div>
+          <div class="title">Inteligência Artificial</div>
+        </div>
+
+        <div class="card">
+          <div class="tag basico">BÁSICO</div>
+          <div class="title">UX Design</div>
+        </div>
+
+        <div class="card">
+          <div class="tag basico">BÁSICO</div>
+          <div class="title">JavaScript</div>
+        </div>
+
+        <div class="card">
+          <div class="tag iniciante">INICIANTE</div>
+          <div class="title">Banco de dados</div>
+        </div>
+
+        <div class="card">
+          <div class="tag basico">BÁSICO</div>
+          <div class="title">C++</div>
+        </div>
+
+        <div class="card">
+          <div class="tag basico">BÁSICO</div>
+          <div class="title">Inglês básico</div>
+      </div>
+    </section>
+
+    <section class="professores">
+   <div class="botao">
+  <h2>Conheça os professores</h2>
+  <button id="toggleProfessores">Ver mais</button>
+  <span class="flecha">&rarr;</span>
+</div>
+      <div class="cards1">
+        <div class="c">
+          <div class="item">
+            <img src="./aula-imgs/alexandre.png" alt="Alexandre">
+            <h3>Alexandre</h3>
+            <p>Dev Front</p>
+          </div>
+        </div>
+
+        <div class="d">
+          <div class="item">
+            <img src="./aula-imgs/daniela.png" alt="Daniela">
+            <h3>Daniela</h3>
+            <p>Lógica de programação</p>
+          </div>
+        </div>
+
+        <div class="c">
+          <div class="item">
+            <img src="./aula-imgs/caio.png" alt="Caio">
+            <h3>Caio</h3>
+            <p>Algoritmo</p>
+          </div>
+        </div>
+      </div>
+      <div class="cards2" id="maisProfessores">
+      <div class="c2">
+          <div class="item">
+            <img src="./aula-imgs/joao.png" alt="João Chad">
+            <h3>João Chad</h3>
+            <p>C++</p>
+          </div>
+        </div>
+        <div class="d">
+          <div class="item">
+            <img src="./aula-imgs/daniel.png" alt="Daniel">
+            <h3>Daniel</h3>
+            <p>Gamificação</p>
+          </div>
+        </div>
+        <div class="c2">
+          <div class="item">
+            <img src="./aula-imgs/yuri.png" alt="Yuri">
+            <h3>Yuri</h3>
+            <p>JavaScript e Python</p>
+          </div>
+        </div>
+        </div>
+    </section>
+  </main>
+  <script>
+    async function sendMessage() {
+    const text = messageInput.value.trim();
+    if (!text) return;
+
+    addMessage(text, "user");
+    messageInput.value = "";
+
+    // Envia a pergunta para a API do servidor
+    try {
+        const response = await fetch('http://localhost:3000/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: text })
+        });
+        const data = await response.json();
+        addMessage(data.reply, "bot");
+    } catch (error) {
+        addMessage("Erro ao conectar com a IA.", "bot");
+    }
+}
+  </script>
+</body>
+
+</html>
