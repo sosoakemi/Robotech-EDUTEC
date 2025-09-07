@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste da API do Gemini</title>
+    <script src="config.js"></script>
+</head>
+<body>
+    <h1>Teste da API do Gemini</h1>
+    <button onclick="testarAPI()">Testar API</button>
+    <div id="resultado"></div>
+
+    <script>
+        async function testarAPI() {
+            const resultado = document.getElementById('resultado');
+            resultado.innerHTML = 'Testando...';
+            
+            try {
+                const response = await fetch(`${CONFIG.GEMINI_API_URL}?key=${CONFIG.GEMINI_API_KEY}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: 'Olá! Você está funcionando?'
+                            }]
+                        }],
+                        generationConfig: CONFIG.GENERATION_CONFIG
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                
+                if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) {
+                    resultado.innerHTML = `✅ SUCESSO!<br><br>Resposta: ${data.candidates[0].content.parts[0].text}`;
+                } else {
+                    resultado.innerHTML = `❌ ERRO: Resposta inválida da API<br><br>${JSON.stringify(data, null, 2)}`;
+                }
+                
+            } catch (error) {
+                resultado.innerHTML = `❌ ERRO: ${error.message}`;
+                console.error('Erro completo:', error);
+            }
+        }
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RoboTech - Chat Interface</title>
+    <link rel="stylesheet" href="chatbot.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="config.js"></script>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <div class="header-left">
+                <div class="logo">
+                    <div class="robot-icon">
+                        <img src="logo 1 (2).png" alt="RoboTech Logo" class="robot-img">
+                    </div>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="close-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        <div class="chat-subtitle">
+            Uma interface de chat ao vivo que permite uma comunicação e conexão contínuas e naturais.
+        </div>
+        <div class="chat-messages">
+            <div class="robo-profile">
+                <div class="profile-header">
+                    <div class="profile-avatar">
+                        <div class="robot-profile-avatar">
+                            <img src="Ativo 8 1.png" alt="RoboTech Avatar" class="profile-img">
+                        </div>
+                    </div>
+                    <div class="profile-info">
+                        <h3 class="profile-name">RoboTech Assistant</h3>
+                        <p class="profile-status">Online • Disponível</p>
+                    </div>
+                </div>
+                <div class="profile-description">
+                    <p>🤖 Assistente de IA especializado em tecnologia e programação</p>
+                    <p>💡 Posso ajudar com HTML, CSS, JavaScript, Python e muito mais!</p>
+                    <p>🚀 Vamos criar algo incrível juntos!</p>
+                </div>
+            </div>
+        </div>
+        <div class="chat-input">
+            <div class="input-container">
+                <div class="input-left">
+                    <i class="fas fa-smile input-icon"></i>
+                </div>
+                <div class="input-center">
+                    <input type="text" placeholder="Digite..." class="message-input">
+                </div>
+                <div class="input-right">
+                    <button class="send-btn">
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+const chatMessages = document.querySelector(".chat-messages");
+const messageInput = document.querySelector(".message-input");
+const sendBtn = document.querySelector(".send-btn");
+
+// Gerar ID de sessão único para manter histórico
+let sessionId = null;
+
+function addMessage(content, sender) {
+    const messageDiv = document.createElement("div");
+    messageDiv.classList.add("message", sender === "user" ? "user-message" : "robochat-message");
+
+    if (sender === "user") {
+        messageDiv.innerHTML = `
+            <div class="message-content">
+                <div class="message-bubble">${content}</div>
+                <div class="message-time">${new Date().toLocaleTimeString()}</div>
+            </div>
+        `;
+    } else {
+        messageDiv.innerHTML = `
+            <div class="message-avatar">
+                <div class="robot-avatar">
+                    <img src="chaticon.png" alt="Robochat Avatar" class="avatar-img">
+                </div>
+            </div>
+            <div class="message-content">
+                <div class="message-header">
+                    <span class="sender-name">Robochat</span>
+                </div>
+                <div class="message-bubble">${content}</div>
+                <div class="message-time">${new Date().toLocaleTimeString()}</div>
+            </div>
+        `;
+    }
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+async function sendMessage() {
+    const text = messageInput.value.trim();
+    if (!text) return;
+
+    addMessage(text, "user");
+    messageInput.value = "";
+
+    // Mostrar indicador de digitação
+    const typingIndicator = document.createElement("div");
+    typingIndicator.className = "message robochat-message";
+    typingIndicator.innerHTML = `
+        <div class="message-avatar">
+            <div class="robot-avatar">
+                <img src="chaticon.png" alt="Robochat Avatar" class="avatar-img">
+            </div>
+        </div>
+        <div class="message-content">
+            <div class="message-header">
+                <span class="sender-name">Robochat</span>
+            </div>
+            <div class="message-bubble">Digitando...</div>
+        </div>
+    `;
+    chatMessages.appendChild(typingIndicator);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+
+    try {
+        // Usar configuração do RoboTech
+        const apiUrl = window.RoboTechConfig ? window.RoboTechConfig.getApiUrl() : '/chat';
+        
+        console.log('Tentando conectar com:', apiUrl);
+        console.log('Ambiente:', window.RoboTechConfig ? (window.RoboTechConfig.isProduction() ? 'Produção' : 'Desenvolvimento') : 'Desconhecido');
+        
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+                message: text,
+                sessionId: sessionId 
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`Erro no servidor: ${response.status}`);
+        }
+
+        const data = await response.json();
+        chatMessages.removeChild(typingIndicator);
+
+        // Atualizar sessionId se recebido do servidor
+        if (data.sessionId) {
+            sessionId = data.sessionId;
+        }
+
+        if (data.reply && data.reply.trim()) {
+            addMessage(data.reply, "bot");
+        } else {
+            addMessage("Desculpe, não consegui processar sua pergunta. Tente novamente.", "bot");
+        }
+    } catch (error) {
+        console.error("Erro:", error);
+        chatMessages.removeChild(typingIndicator);
+        addMessage("❌ Erro ao conectar com o servidor. Tente novamente em alguns segundos.", "bot");
+    }
+}
+
+sendBtn.addEventListener("click", sendMessage);
+messageInput.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") sendMessage();
+});
+
+// Inicializar chatbot sem mensagem automática
+window.addEventListener("load", () => {
+    // O chatbot agora inicia sem mensagem automática
+    // O usuário pode fazer qualquer pergunta diretamente
+});
+</script>
+</body>
+</html>
