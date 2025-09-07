@@ -1,37 +1,42 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-// Configuração da API do Gemini
-const API_KEY = "AIzaSyDi3aQ8UTOobPkceJ4pcy1B7x1yzm96XQ4";
-const genAI = new GoogleGenerativeAI(API_KEY);
+// Configuração da API do Gemini via variável de ambiente
+const API_KEY = process.env.GEMINI_API_KEY || "";
 
-// Configuração melhorada do modelo
-const model = genAI.getGenerativeModel({ 
-  model: "gemini-1.5-flash",
-  generationConfig: {
-    temperature: 0.9,
-    topK: 50,
-    topP: 0.98,
-    maxOutputTokens: 1024,
-  },
-  safetySettings: [
-    {
-      category: "HARM_CATEGORY_HARASSMENT",
-      threshold: "BLOCK_MEDIUM_AND_ABOVE",
+let modelInstance = null;
+function getModel() {
+  if (!API_KEY) return null;
+  if (modelInstance) return modelInstance;
+  const genAI = new GoogleGenerativeAI(API_KEY);
+  modelInstance = genAI.getGenerativeModel({
+    model: "gemini-1.5-flash",
+    generationConfig: {
+      temperature: 0.9,
+      topK: 50,
+      topP: 0.98,
+      maxOutputTokens: 1024,
     },
-    {
-      category: "HARM_CATEGORY_HATE_SPEECH",
-      threshold: "BLOCK_MEDIUM_AND_ABOVE",
-    },
-    {
-      category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-      threshold: "BLOCK_MEDIUM_AND_ABOVE",
-    },
-    {
-      category: "HARM_CATEGORY_DANGEROUS_CONTENT",
-      threshold: "BLOCK_MEDIUM_AND_ABOVE",
-    },
-  ],
-});
+    safetySettings: [
+      {
+        category: "HARM_CATEGORY_HARASSMENT",
+        threshold: "BLOCK_MEDIUM_AND_ABOVE",
+      },
+      {
+        category: "HARM_CATEGORY_HATE_SPEECH",
+        threshold: "BLOCK_MEDIUM_AND_ABOVE",
+      },
+      {
+        category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+        threshold: "BLOCK_MEDIUM_AND_ABOVE",
+      },
+      {
+        category: "HARM_CATEGORY_DANGEROUS_CONTENT",
+        threshold: "BLOCK_MEDIUM_AND_ABOVE",
+      },
+    ],
+  });
+  return modelInstance;
+}
 
 // Prompt personalizado
 const SYSTEM_PROMPT = `Você é o RoboTech Assistant, um assistente de IA amigável e conversacional. 
@@ -88,6 +93,13 @@ export default async function handler(req, res) {
   }
 
   try {
+    const model = getModel();
+    if (!model) {
+      return res.status(500).json({
+        reply: "Configuração ausente no servidor. Defina GEMINI_API_KEY nas variáveis de ambiente.",
+        sessionId: sessionId || generateSessionId(),
+      });
+    }
     // Gerar ou usar sessionId existente
     const currentSessionId = sessionId || generateSessionId();
     
