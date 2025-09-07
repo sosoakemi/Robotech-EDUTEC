@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const titleEl = card.querySelector('.title');
       const key = mapTitleToKey(titleEl ? titleEl.textContent : '');
       if (!key) return;
-      window.location.href = `/teste-aulas-Copia/index.html?course=${encodeURIComponent(key)}`;
+      window.location.href = `index.html?course=${encodeURIComponent(key)}`;
     });
   });
 
@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
       'z-index:2000'
     ].join(';');
     const img = document.createElement('img');
-    img.src = '/teste-aulas-Copia/chaticon.png';
+    img.src = 'chaticon.png'; // Caminho correto da imagem do bot
     img.alt = 'Chatbot';
     img.style.cssText = 'width:35px;height:35px;object-fit:contain;';
     btn.appendChild(img);
@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
     body.style.cssText = 'padding:0;';
 
     const iframe = document.createElement('iframe');
-    iframe.src = '/chatbot.html';
+    iframe.src = 'chatbot.html';
     iframe.title = 'Chatbot';
     iframe.style.cssText = 'width:100%;height:70vh;border:0;border-radius:12px;background:#0f0f23;';
     body.appendChild(iframe);

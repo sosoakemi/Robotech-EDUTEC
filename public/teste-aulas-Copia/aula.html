@@ -7,21 +7,23 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap"rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css">
   <link rel="stylesheet" href="aula.css">
   <script src="./main.js" defer></script>
   <title>Aulas</title>
 </head>
 
 <body>
-  <header class="cabecalho">
-    <div class="container navegacao">
-      <a href="/index.html" class="marca" aria-label="RoboTech">
-        <img src="logo 1 (2).png" alt="RoboTech" class="marca-imagem" />
+
+    <header class="site-header">
+    <div class="container nav">
+      <a href="../index.html" class="brand" aria-label="RoboTech">
+        <img src="../images.home/logo 1 (2).png" alt="RoboTech" class="brand-img" />
       </a>
-      <nav class="menu-principal">
-        <a href="/teste-aulas-Copia/aula.html">Aulas</a>
-        <a href="/game/index.html">Game</a>
-        <a href="/blog/index.html">Blog</a>
+      <nav class="main-nav">
+        <a href="aula.html">Aulas</a>
+        <a href="../game/index.html">Game</a>
+        <a href="../blog/index.html">Blog</a>
       </nav>
     </div>
   </header>
@@ -149,8 +151,7 @@
 
     // Envia a pergunta para a API do servidor
     try {
-        const apiUrl = window.RoboTechConfig ? window.RoboTechConfig.getApiUrl() : 'http://localhost:3000/chat';
-        const response = await fetch(apiUrl, {
+        const response = await fetch('http://localhost:3000/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ message: text })

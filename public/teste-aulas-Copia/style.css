@@ -334,8 +334,11 @@ body {
     height: 18.75rem;
     background-image: var(--lesson-cover, url('imagem CSS (3).png'));
     background-position: center;
-    background-size: cover;
-    opacity: 0.6; /* Aumentado de 0.15 para 0.6 para ficar mais aparente */
+        color: white;
+        font-size: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     border-radius: 25px 25px 0 0;
     z-index: -1;
 }

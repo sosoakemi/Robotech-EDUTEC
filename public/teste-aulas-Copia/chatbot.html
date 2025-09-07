@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RoboTech - Chat Interface</title>
-    <link rel="stylesheet" href="/teste-aulas-Copia/chatbot.css">
+    <link rel="stylesheet" href="chatbot.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <script src="/config.js"></script>
+    <script src="config.js"></script>
 </head>
 <body>
     <div class="chat-container">
@@ -14,7 +14,7 @@
             <div class="header-left">
                 <div class="logo">
                     <div class="robot-icon">
-                        <i class="fas fa-robot robot-img" style="color: #00ff88; font-size: 60px;"></i>
+                            <img src="logo 1 (2).png" alt="RoboTech Logo" class="robot-img">
                     </div>
                 </div>
             </div>
@@ -32,7 +32,7 @@
                 <div class="profile-header">
                     <div class="profile-avatar">
                         <div class="robot-profile-avatar">
-                            <i class="fas fa-robot profile-img" style="color: #00ff88; font-size: 48px;"></i>
+                               
                         </div>
                     </div>
                     <div class="profile-info">
@@ -50,7 +50,7 @@
         <div class="chat-input">
             <div class="input-container">
                 <div class="input-left">
-                    <i class="fas fa-smile input-icon"></i>
+                   
                 </div>
                 <div class="input-center">
                     <input type="text" placeholder="Digite..." class="message-input">
@@ -87,13 +87,13 @@ function addMessage(content, sender) {
         messageDiv.innerHTML = `
             <div class="message-avatar">
                 <div class="robot-avatar">
-                    <i class="fas fa-robot avatar-img" style="color: #00ff88; font-size: 24px;"></i>
+                    <img src="Ativo 8 1.png" alt="Robochat Avatar" class="avatar-img">
                 </div>
             </div>
             <div class="message-content">
                 <div class="message-header">
                     <span class="sender-name">Robochat</span>
-                </div>
+                            
                 <div class="message-bubble">${content}</div>
                 <div class="message-time">${new Date().toLocaleTimeString()}</div>
             </div>
@@ -116,13 +116,13 @@ async function sendMessage() {
     typingIndicator.innerHTML = `
         <div class="message-avatar">
             <div class="robot-avatar">
-                <i class="fas fa-robot avatar-img" style="color: #00ff88; font-size: 24px;"></i>
+                <img src="Ativo 8 1.png" alt="Robochat Avatar" class="avatar-img">
             </div>
         </div>
         <div class="message-content">
             <div class="message-header">
                 <span class="sender-name">Robochat</span>
-            </div>
+                       
             <div class="message-bubble">Digitando...</div>
         </div>
     `;
@@ -181,6 +181,6 @@ window.addEventListener("load", () => {
     // O chatbot agora inicia sem mensagem automática
     // O usuário pode fazer qualquer pergunta diretamente
 });
-    </script>
+</script>
 </body>
 </html>

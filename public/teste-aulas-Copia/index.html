@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RoboTech - Plataforma de Aulas</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="config.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <a href="../index.html">
+                <img src="../images.home/logo 1 (2).png" alt="RoboTech Logo" class="logo-img">
+            </a>
+        </div>
+       <nav class="main-nav">
+  <a href="aula.html">Aulas</a>
+  <a href="../game/index.html">Game</a>
+  <a href="../blog/index.html">Blog</a>
+</nav>
+    </header>
+    
+
+    <!-- Seção aulas -->
+    <section class="secao-titulo-blog">
+        <h1 class="titulo-blog">AULAS</h1>
+    </section>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Left Sidebar -->
+        <aside class="sidebar">
+            <!-- Progress Card -->
+            <div class="progress-card">
+                <h3>Seu progresso</h3>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 65%"></div>
+                </div>
+                <div class="progress-info">
+                    <span>Módulo 2 de 4</span>
+                    <span>13/20 aulas</span>
+                </div>
+            </div>
+
+            <!-- Course Module Card -->
+            <div class="module-card">
+                <h3>Módulo do Curso</h3>
+                <div class="module-list" id="module-list">
+                    <!-- Módulos serão carregados dinamicamente -->
+                </div>
+
+                <!-- Floating Chat Icon -->
+                <div class="floating-chat" id="floating-chat">
+                        <img src="chaticon.png" alt="Chatbot" class="chat-icon" loading="lazy" decoding="async">
+                        <a href="aula.html" class="aula-link">Ir para página de aula</a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Course Selection Screen -->
+            <div id="course-selection" class="course-selection">
+                <h2 class="course-selection-title">Escolha sua aula</h2>
+                <div class="course-grid" id="course-grid">
+                    <!-- Cursos serão carregados dinamicamente -->
+                </div>
+            </div>
+
+            <!-- Lesson Content -->
+            <div id="lesson-content" class="lesson-content" style="display: none;">
+                <!-- Conteúdo da aula será carregado dinamicamente -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Chat Modal -->
+    <div id="chat-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Chat com IA</h3>
+                <span class="close" id="close-chat">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="chat-messages" class="chat-messages">
+                    <div class="message bot">
+                        <div class="message-content">
+                            Olá! Sou o assistente virtual da RoboTech. Como posso te ajudar hoje?
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-input">
+                    <input type="text" id="chat-input" placeholder="Digite sua mensagem...">
+                    <button id="send-message">Enviar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Video Modal -->
+    <div id="video-modal" class="modal">
+        <div class="modal-content video-modal">
+            <div class="modal-header">
+                <h3>Videoaula</h3>
+                <span class="close" id="close-video">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="video-placeholder">
+                    <i class="fas fa-play-circle"></i>
+                    <p>Videoaula em desenvolvimento</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back Button -->
+    <button id="back-to-courses" class="back-button" style="display: none;">
+        <i class="fas fa-arrow-left"></i>
+        Voltar às Aulas
+    </button>
+
+
+    <script src="script.js"></script>
+</body>
+</html>

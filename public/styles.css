@@ -106,9 +106,9 @@ body {
 .blog { padding: 42px 0; }
 .blog-grid { grid-template-columns: repeat(3, 1fr); }
 .blog-card .thumb { height: 160px; background: #0e1420; border-bottom: 1px solid var(--line); }
-.thumb.ai { background: radial-gradient(600px 80px at top, rgba(197, 58, 247, .18), transparent), #0e1420 url('/images.home/gamefi.png') center/cover; }
-.thumb.access { background: radial-gradient(600px 80px at top, rgba(124,58,237,.18), transparent), #0e1420 url('/images.home/access.png') center/cover; }
-.thumb.future { background: radial-gradient(600px 80px at top, rgba(244,63,94,.18), transparent), #0e1420 url('/images.home/future.png') center/cover; }
+.thumb.ai { background: radial-gradient(600px 80px at top, rgba(197, 58, 247, .18), transparent), #0e1420 url('images.home/gamefi.png') center/cover; }
+.thumb.access { background: radial-gradient(600px 80px at top, rgba(124,58,237,.18), transparent), #0e1420 url('images.home/access.png') center/cover; }
+.thumb.future { background: radial-gradient(600px 80px at top, rgba(244,63,94,.18), transparent), #0e1420 url('images.home/future.png') center/cover; }
 .cta { padding: 48px 0 64px; }
 .cta-box { border-left: 6px solid var(--brand-1); padding: 14px 18px 18px; background: #111521; border: 1px solid var(--line); border-left-color: transparent; box-shadow: var(--shadow); position: relative; }
 .cta-box::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: linear-gradient(180deg, var(--brand-1)); border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
