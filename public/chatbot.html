@@ -110,7 +110,7 @@ async function sendMessage() {
     addMessage(text, "user");
     messageInput.value = "";
 
-    // Mostrar indicador de digitação
+    
     const typingIndicator = document.createElement("div");
     typingIndicator.className = "message robochat-message";
     typingIndicator.innerHTML = `
@@ -130,7 +130,7 @@ async function sendMessage() {
     chatMessages.scrollTop = chatMessages.scrollHeight;
 
     try {
-        // Usar configuração do RoboTech
+      
         const apiUrl = window.RoboTechConfig ? window.RoboTechConfig.getApiUrl() : '/chat';
         
         console.log('Tentando conectar com:', apiUrl);
@@ -154,7 +154,7 @@ async function sendMessage() {
         const data = await response.json();
         chatMessages.removeChild(typingIndicator);
 
-        // Atualizar sessionId se recebido do servidor
+        
         if (data.sessionId) {
             sessionId = data.sessionId;
         }
@@ -176,10 +176,9 @@ messageInput.addEventListener("keypress", (e) => {
     if (e.key === "Enter") sendMessage();
 });
 
-// Inicializar chatbot sem mensagem automática
+
 window.addEventListener("load", () => {
-    // O chatbot agora inicia sem mensagem automática
-    // O usuário pode fazer qualquer pergunta diretamente
+    
 });
     </script>
 </body>

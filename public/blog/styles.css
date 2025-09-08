@@ -39,11 +39,6 @@
     color: #000000;
 }
 
-/* Navigation styles removed - using main styles.css */
-
-/* Button styles removed - using main styles.css */
-
-/* Reset e configurações básicas */
 * {
     margin: 0;
     padding: 0;
@@ -57,7 +52,7 @@ body {
     padding-top: 80px;
 }
 
-/* Banner Principal */
+
 .banner-principal {
     position: relative;
     width: 100%;
@@ -275,7 +270,7 @@ body {
     flex-shrink: 0;
 }
 
-/* Seção de Artigos da Semana */
+
 .artigos-semana {
     padding: 0 40px 80px;
 }
@@ -329,7 +324,7 @@ body {
     box-shadow: 0 15px 30px rgba(0, 255, 136, 0.2);
 }
 
-/* Cards horizontais (Gameficação e Acessibilidade) */
+
 .card-artigo-semana.horizontal {
     display: flex;
     align-items: center;
@@ -349,7 +344,7 @@ body {
     padding: 15px 20px;
 }
 
-/* Card vertical (Futuro da Educação) */
+
 .card-artigo-semana.vertical {
     display: flex;
     flex-direction: column;
@@ -425,7 +420,6 @@ body {
     font-family: Inter, system-ui, -apple-system;
 }
 
-/* Responsividade */
 @media (max-width: 1024px) {
     .grade-artigos-recentes {
         grid-template-columns: repeat(2, 1fr);
@@ -486,4 +480,4 @@ body {
     }
 }
 
-/* Responsive navigation styles removed - using main styles.css */
+

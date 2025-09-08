@@ -103,10 +103,10 @@ export default async function handler(req, res) {
     // Gerar ou usar sessionId existente
     const currentSessionId = sessionId || generateSessionId();
     
-    // Construir o prompt com histórico (simplificado para Vercel)
+    
     let fullPrompt = SYSTEM_PROMPT + "\n\n";
     
-    // Adicionar a mensagem atual com instrução específica
+  
     fullPrompt += `Usuário: ${message}\n\nIMPORTANTE: Responda diretamente à pergunta do usuário. NÃO use saudações genéricas, NÃO pergunte como pode ajudar, NÃO use frases prontas. Seja direto e natural.\n\nRoboTech:`;
     
     // Gerar resposta
