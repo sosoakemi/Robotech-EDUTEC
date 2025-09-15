@@ -11,14 +11,14 @@ function flipCard() {
     this.classList.add(`flip`);
 
     if (!hasFlippedCard) {
-        //first click
+        
         hasFlippedCard = true;
         firstCard = this;
 
         return;
     }
 
-    //second click
+
     
     secondCard = this; 
         
@@ -67,7 +67,7 @@ function resetBoard() {
 cards.forEach(card => card.addEventListener(`click`, flipCard));
 
      
-        // Script do CodeQuest
+      //jogo da memoria
         let nivelAtualQuest = 1;
         let pontuacaoQuest = 0;
         let totalNiveisQuest = 5;
@@ -78,7 +78,7 @@ cards.forEach(card => card.addEventListener(`click`, flipCard));
                 descricao: "Sua missão é criar uma função que retorna 'Olá, Mundo!'.",
                 saidaEsperada: "Olá, Mundo!",
                 dica: "Use a palavra-chave 'return' seguida da string \"Olá, Mundo!\" dentro da função.",
-                modelo: "function minhaFuncao() {\n    // Seu código aqui\n    return 'Olá, Mundo!';\n}",
+                modelo: "function minhaFuncao() {\n    // Seu código aqui\n}",
                 funcaoTeste: (codigo) => {
                     try {
                         eval(codigo);
@@ -93,7 +93,7 @@ cards.forEach(card => card.addEventListener(`click`, flipCard));
                 descricao: "Crie uma função que recebe dois números e retorna a soma deles.",
                 saidaEsperada: "soma(5, 3) deve retornar 8",
                 dica: "Use os parâmetros da função e o operador '+' para somar os números.",
-                modelo: "function soma(a, b) {\n    // Seu código aqui\n    return a + b;\n}",
+                modelo: "function soma(a, b) {\n    // Seu código aqui\n}",
                 funcaoTeste: (codigo) => {
                     try {
                         eval(codigo);
@@ -108,7 +108,7 @@ cards.forEach(card => card.addEventListener(`click`, flipCard));
                 descricao: "Crie uma função que verifica se um número é par ou ímpar.",
                 saidaEsperada: "ehPar(4) deve retornar true, ehPar(7) deve retornar false",
                 dica: "Use o operador módulo (%) para verificar se o resto da divisão por 2 é zero.",
-                modelo: "function ehPar(numero) {\n    // Seu código aqui\n    return numero % 2 === 0;\n}",
+                modelo: "function ehPar(numero) {\n    // Seu código aqui\n}",
                 funcaoTeste: (codigo) => {
                     try {
                         eval(codigo);
@@ -123,7 +123,7 @@ cards.forEach(card => card.addEventListener(`click`, flipCard));
                 descricao: "Crie uma função que conta quantos caracteres tem uma string.",
                 saidaEsperada: "contarCaracteres('JavaScript') deve retornar 10",
                 dica: "Use a propriedade '.length' das strings para contar os caracteres.",
-                modelo: "function contarCaracteres(texto) {\n    // Seu código aqui\n    return texto.length;\n}",
+                modelo: "function contarCaracteres(texto) {\n    // Seu código aqui\n}",
                 funcaoTeste: (codigo) => {
                     try {
                         eval(codigo);
@@ -138,7 +138,7 @@ cards.forEach(card => card.addEventListener(`click`, flipCard));
                 descricao: "Crie uma função que retorna o maior de três números.",
                 saidaEsperada: "maiorDeTres(10, 5, 8) deve retornar 10",
                 dica: "Use Math.max() ou condicionais if/else para comparar os números.",
-                modelo: "function maiorDeTres(a, b, c) {\n    // Seu código aqui\n    return Math.max(a, b, c);\n}",
+                modelo: "function maiorDeTres(a, b, c) {\n    // Seu código aqui\n}",
                 funcaoTeste: (codigo) => {
                     try {
                         eval(codigo);
@@ -200,16 +200,16 @@ cards.forEach(card => card.addEventListener(`click`, flipCard));
                 nivelAtualQuest++;
                 atualizarInterfaceQuest();
             } else {
-                // Jogo completo
+               
                 document.getElementById('saida-quest').innerHTML = '🎉 Parabéns! Você completou todos os desafios do CodeQuest!\n\nPontuação final: ' + pontuacaoQuest + ' pontos';
                 document.getElementById('saida-quest').className = 'saida sucesso';
             }
         }
 
-        // Event Listeners para o CodeQuest
+        
         document.getElementById('botao-executar-quest').addEventListener('click', executarCodigoQuest);
         document.getElementById('botao-dica-quest').addEventListener('click', mostrarDicaQuest);
         document.getElementById('botao-proximo-quest').addEventListener('click', proximoNivelQuest);
 
-        // Inicializar o jogo
+       
         atualizarInterfaceQuest();

@@ -60,6 +60,7 @@ body {
   main {
     height: auto;      /* Permite que o conteúdo cresça conforme necessário */
     display: block;    /* Ou flex-direction: column se precisar de flex */
+    font-family: 'JetBrains Mono', monospace;
   }
   .memory-game {
     width: 40rem;
@@ -106,7 +107,7 @@ body {
   .front-face {
     transform: rotateY(180deg);
   }
- /* CodeQuest - Adaptado ao tema RoboTech */
+
         .secao-quest-codigo {
             flex: 1;
             display: flex;
@@ -127,6 +128,11 @@ body {
             margin-bottom: 1.5rem;
         }
 
+        .cabecalho-memory {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
         .titulo-quest-codigo {
             font-size: 2rem;
             font-weight: 700;
@@ -135,7 +141,17 @@ body {
             -webkit-text-fill-color: transparent;
             background-clip: text;
             margin-bottom: 0.5rem;
-            
+
+        }
+
+        .titulo-memory {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, #26E28B 0%, #009B85 35%, #8265CF 70%, #C73AF8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
         }
 
         .subtitulo-quest-codigo {
@@ -369,6 +385,16 @@ body {
             color: #26E28B;
             margin-bottom: 1rem;
             font-size: 1.5rem;
+        }
+
+        .celebracao p {
+            text-align: center;
+            margin: 1rem 0;
+            color: #E5E7EB;
+        }
+
+        .celebracao .botao {
+            margin: 1rem auto 0;
         }
 
         @media (max-width: 1200px) {
