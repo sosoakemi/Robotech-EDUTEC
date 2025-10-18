@@ -1,6 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-// Configuração da API do Gemini via variável de ambiente
+
 const API_KEY = process.env.GEMINI_API_KEY || "";
 
 let modelInstance = null;

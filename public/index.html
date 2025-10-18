@@ -12,6 +12,7 @@
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
 
     <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="modal-auth.css" />
   </head>
   <body>
     <header class="site-header">
@@ -20,10 +21,13 @@
           <img src="images.home/logo 1 (2).png" alt="RoboTech" class="brand-img" />
         </a>
         <nav class="main-nav">
-          <a href="teste-aulas-Copia/aula.html">Aulas</a>
-          <a href="game/index.html">Game</a>
-          <a href="blog/index.html">Blog</a>
+          <a href="teste-aulas-Copia/aula.html" onclick="return verificarAcessoProtegido(event, 'teste-aulas-Copia/aula.html')">Aulas</a>
+          <a href="game/index.html" onclick="return verificarAcessoProtegido(event, 'game/index.html')">Game</a>
+          <a href="blog/index.html" onclick="return verificarAcessoProtegido(event, 'blog/index.html')">Blog</a>
         </nav>
+        <button class="btn-entrar" id="btnEntrar" onclick="abrirModal('modalLogin')">
+          <i class="ri-user-line"></i> Entrar
+        </button>
       </div>
     </header>
 
@@ -38,7 +42,7 @@
             <img src="images.home/listras.png" alt="listras decorativas" class="stripes" />
             <p class="lead">Desvende o mundo da programação com nossos cursos completos!</p>
             <div class="hero-actions">
-              <a class="btn btn-primary btn-lg hero-cta" href="teste-aulas-Copia/index.html">Comece agora</a>
+              <a class="btn btn-primary btn-lg hero-cta" href="teste-aulas-Copia/index.html" onclick="return verificarAcessoProtegido(event, 'teste-aulas-Copia/index.html')">Comece agora</a>
             </div>
           </div>
 
@@ -160,7 +164,7 @@
             <h3>Que tal transformar o "difícil" em "fácil" e dar o primeiro passo para uma nova carreira?</h3>
             <p>Você já se imaginou criando seus próprios aplicativos, jogos ou sites? Aqui o aprendizado pode te levar a um mundo de possibilidades e oportunidades. E se eu te dissermos que aprender a programar pode ser mais fácil do que você imagina?</p>
             <div class="hero-actions">
-              <a class="btn btn-primary btn-lg" href="#">Quero começar</a>
+              <a class="btn btn-primary btn-lg" href="teste-aulas-Copia/index.html" onclick="return verificarAcessoProtegido(event, 'teste-aulas-Copia/index.html')">Quero começar</a>
               <a class="btn btn-ghost btn-lg" href="#aulas">Ver conteúdo</a>
             </div>
           </div>
@@ -195,8 +199,327 @@
       </div>
     </footer>
 
+    <!-- Modais de Autenticação -->
+    <!-- Modal de Login -->
+    <div id="modalLogin" class="modal">
+      <div class="modal-content">
+        <span class="modal-close" onclick="fecharModal('modalLogin')">&times;</span>
+        <h2>Entrar na sua conta</h2>
+        <p class="modal-subtitle">Acesse a plataforma RoboTech</p>
+        
+        <div id="erroLogin" class="mensagem-error" style="display: none;"></div>
+        
+        <form id="formLogin" onsubmit="handleLogin(event)">
+          <div class="form-group">
+            <label for="emailLogin">
+              <i class="ri-mail-line"></i> Email
+            </label>
+            <input type="email" id="emailLogin" required placeholder="seu@email.com">
+          </div>
+          
+          <div class="form-group">
+            <label for="senhaLogin">
+              <i class="ri-lock-line"></i> Senha
+            </label>
+            <input type="password" id="senhaLogin" required placeholder="••••••••">
+          </div>
+          
+          <button type="submit" class="btn-modal btn-modal-primary" id="btnSubmitLogin">
+            <i class="ri-login-box-line"></i> Entrar
+          </button>
+        </form>
+        
+        <div class="modal-links">
+          <a href="#" onclick="trocarModal('modalLogin', 'modalCadastro')">
+            <i class="ri-user-add-line"></i> Criar nova conta
+          </a>
+          <a href="#" onclick="trocarModal('modalLogin', 'modalEsqueceu')">
+            <i class="ri-lock-unlock-line"></i> Esqueceu a senha?
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de Cadastro -->
+    <div id="modalCadastro" class="modal">
+      <div class="modal-content">
+        <span class="modal-close" onclick="fecharModal('modalCadastro')">&times;</span>
+        <h2>Criar nova conta</h2>
+        <p class="modal-subtitle">Junte-se à comunidade RoboTech</p>
+        
+        <div id="erroCadastro" class="mensagem-error" style="display: none;"></div>
+        
+        <form id="formCadastro" onsubmit="handleCadastro(event)">
+          <div class="form-group">
+            <label for="nomeCadastro">
+              <i class="ri-user-line"></i> Nome Completo
+            </label>
+            <input type="text" id="nomeCadastro" required placeholder="Seu nome">
+          </div>
+          
+          <div class="form-group">
+            <label for="emailCadastro">
+              <i class="ri-mail-line"></i> Email
+            </label>
+            <input type="email" id="emailCadastro" required placeholder="seu@email.com">
+          </div>
+          
+          <div class="form-group">
+            <label for="senhaCadastro">
+              <i class="ri-lock-line"></i> Senha
+            </label>
+            <input type="password" id="senhaCadastro" required minlength="6" placeholder="Mínimo 6 caracteres">
+          </div>
+          
+          <div class="form-group">
+            <label for="confirmarSenhaCadastro">
+              <i class="ri-lock-line"></i> Confirmar Senha
+            </label>
+            <input type="password" id="confirmarSenhaCadastro" required placeholder="Digite a senha novamente">
+          </div>
+          
+          <div class="form-group">
+            <label for="tipoConta">
+              <i class="ri-shield-user-line"></i> Tipo de Conta
+            </label>
+            <select id="tipoConta">
+              <option value="student">Estudante</option>
+              <option value="teacher">Professor</option>
+            </select>
+          </div>
+          
+          <button type="submit" class="btn-modal btn-modal-primary" id="btnSubmitCadastro">
+            <i class="ri-user-add-line"></i> Criar Conta
+          </button>
+        </form>
+        
+        <div class="modal-links">
+          <a href="#" onclick="trocarModal('modalCadastro', 'modalLogin')">
+            <i class="ri-login-box-line"></i> Já possui uma conta?
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de Recuperação de Senha -->
+    <div id="modalEsqueceu" class="modal">
+      <div class="modal-content">
+        <span class="modal-close" onclick="fecharModal('modalEsqueceu')">&times;</span>
+        <h2>Recuperar senha</h2>
+        <p class="modal-subtitle">Enviaremos instruções para seu email</p>
+        
+        <div id="erroEsqueceu" class="mensagem-error" style="display: none;"></div>
+        <div id="sucessoEsqueceu" class="mensagem-success" style="display: none;"></div>
+        
+        <form id="formEsqueceu" onsubmit="handleEsqueceuSenha(event)">
+          <div class="form-group">
+            <label for="emailEsqueceu">
+              <i class="ri-mail-line"></i> Email
+            </label>
+            <input type="email" id="emailEsqueceu" required placeholder="seu@email.com">
+          </div>
+          
+          <button type="submit" class="btn-modal btn-modal-primary" id="btnSubmitEsqueceu">
+            <i class="ri-mail-send-line"></i> Enviar Instruções
+          </button>
+        </form>
+        
+        <div class="modal-links">
+          <a href="#" onclick="trocarModal('modalEsqueceu', 'modalLogin')">
+            <i class="ri-arrow-left-line"></i> Voltar ao login
+          </a>
+        </div>
+      </div>
+    </div>
+
     <script>
       document.getElementById('year').textContent = new Date().getFullYear();
+
+      const API_URL = 'http://localhost:5001';
+
+      // Funções de modal
+      function abrirModal(modalId) {
+        document.getElementById(modalId).style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+      }
+
+      function fecharModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
+        document.body.style.overflow = 'auto';
+        // Limpar mensagens de erro
+        const erroEl = document.getElementById('erro' + modalId.replace('modal', ''));
+        if (erroEl) erroEl.style.display = 'none';
+      }
+
+      function trocarModal(modalAtual, modalNovo) {
+        fecharModal(modalAtual);
+        setTimeout(() => abrirModal(modalNovo), 100);
+        return false;
+      }
+
+      // Verificar se está logado
+      function estaLogado() {
+        return !!localStorage.getItem('token');
+      }
+
+      // Atualizar UI baseado no estado de autenticação
+      function atualizarUI() {
+        const btnEntrar = document.getElementById('btnEntrar');
+        if (estaLogado()) {
+          const userName = localStorage.getItem('userName') || 'Usuário';
+          btnEntrar.innerHTML = `<i class="ri-user-line"></i> ${userName}`;
+          btnEntrar.onclick = () => {
+            if (confirm('Deseja sair da sua conta?')) {
+              localStorage.removeItem('token');
+              localStorage.removeItem('userName');
+              location.reload();
+            }
+          };
+        }
+      }
+
+      // Verificar acesso protegido
+      function verificarAcessoProtegido(event, url) {
+        if (!estaLogado()) {
+          event.preventDefault();
+          abrirModal('modalLogin');
+          return false;
+        }
+        return true;
+      }
+
+      // Handle Login
+      async function handleLogin(event) {
+        event.preventDefault();
+        
+        const email = document.getElementById('emailLogin').value;
+        const password = document.getElementById('senhaLogin').value;
+        const btnSubmit = document.getElementById('btnSubmitLogin');
+        const erroEl = document.getElementById('erroLogin');
+        
+        btnSubmit.disabled = true;
+        btnSubmit.innerHTML = '<i class="ri-loader-4-line"></i> Entrando...';
+        erroEl.style.display = 'none';
+        
+        try {
+          const response = await fetch(`${API_URL}/api/auth/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+          });
+          
+          const data = await response.json();
+          
+          if (response.ok) {
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('userName', data.user.name);
+            fecharModal('modalLogin');
+            atualizarUI();
+            alert('Login realizado com sucesso!');
+          } else {
+            erroEl.textContent = data.error || 'Erro ao fazer login';
+            erroEl.style.display = 'block';
+          }
+        } catch (error) {
+          erroEl.textContent = 'Erro ao conectar com o servidor';
+          erroEl.style.display = 'block';
+        } finally {
+          btnSubmit.disabled = false;
+          btnSubmit.innerHTML = '<i class="ri-login-box-line"></i> Entrar';
+        }
+      }
+
+      // Handle Cadastro
+      async function handleCadastro(event) {
+        event.preventDefault();
+        
+        const name = document.getElementById('nomeCadastro').value;
+        const email = document.getElementById('emailCadastro').value;
+        const password = document.getElementById('senhaCadastro').value;
+        const confirmPassword = document.getElementById('confirmarSenhaCadastro').value;
+        const role = document.getElementById('tipoConta').value;
+        const btnSubmit = document.getElementById('btnSubmitCadastro');
+        const erroEl = document.getElementById('erroCadastro');
+        
+        erroEl.style.display = 'none';
+        
+        if (password !== confirmPassword) {
+          erroEl.textContent = 'As senhas não coincidem';
+          erroEl.style.display = 'block';
+          return;
+        }
+        
+        btnSubmit.disabled = true;
+        btnSubmit.innerHTML = '<i class="ri-loader-4-line"></i> Criando conta...';
+        
+        try {
+          const response = await fetch(`${API_URL}/api/auth/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, email, password, role })
+          });
+          
+          const data = await response.json();
+          
+          if (response.ok) {
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('userName', data.user.name);
+            fecharModal('modalCadastro');
+            atualizarUI();
+            alert('Conta criada com sucesso!');
+          } else {
+            erroEl.textContent = data.error || 'Erro ao criar conta';
+            erroEl.style.display = 'block';
+          }
+        } catch (error) {
+          erroEl.textContent = 'Erro ao conectar com o servidor';
+          erroEl.style.display = 'block';
+        } finally {
+          btnSubmit.disabled = false;
+          btnSubmit.innerHTML = '<i class="ri-user-add-line"></i> Criar Conta';
+        }
+      }
+
+      // Handle Esqueceu Senha
+      async function handleEsqueceuSenha(event) {
+        event.preventDefault();
+        
+        const email = document.getElementById('emailEsqueceu').value;
+        const btnSubmit = document.getElementById('btnSubmitEsqueceu');
+        const erroEl = document.getElementById('erroEsqueceu');
+        const sucessoEl = document.getElementById('sucessoEsqueceu');
+        
+        btnSubmit.disabled = true;
+        btnSubmit.innerHTML = '<i class="ri-loader-4-line"></i> Enviando...';
+        erroEl.style.display = 'none';
+        sucessoEl.style.display = 'none';
+        
+        try {
+          // Simular envio (você pode implementar a rota no backend depois)
+          setTimeout(() => {
+            sucessoEl.textContent = 'Instruções enviadas para seu email!';
+            sucessoEl.style.display = 'block';
+            btnSubmit.disabled = false;
+            btnSubmit.innerHTML = '<i class="ri-mail-send-line"></i> Enviar Instruções';
+          }, 1500);
+        } catch (error) {
+          erroEl.textContent = 'Erro ao enviar email';
+          erroEl.style.display = 'block';
+          btnSubmit.disabled = false;
+          btnSubmit.innerHTML = '<i class="ri-mail-send-line"></i> Enviar Instruções';
+        }
+      }
+
+      // Fechar modal ao clicar fora
+      window.onclick = function(event) {
+        if (event.target.classList.contains('modal')) {
+          event.target.style.display = 'none';
+          document.body.style.overflow = 'auto';
+        }
+      };
+
+      // Inicializar UI
+      atualizarUI();
     </script>
   </body>
   </html>

@@ -2,7 +2,7 @@
 const CONFIG = {
     // URLs da API
     API_URLS: {
-        development: 'http://localhost:3000/chat',
+        development: 'http://localhost:5001/chat',
         production: '/chat'
     },
     

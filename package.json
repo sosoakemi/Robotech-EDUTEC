@@ -7,10 +7,19 @@
     "build": "echo 'Build completed'",
     "start": "echo 'Static site - no server needed'"
   },
-  "keywords": ["education", "programming", "chatbot", "ai", "robotech"],
+  "keywords": [
+    "education",
+    "programming",
+    "chatbot",
+    "ai",
+    "robotech"
+  ],
   "author": "RoboTech Team",
   "license": "MIT",
   "dependencies": {
     "@google/generative-ai": "^0.24.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
   }
 }
