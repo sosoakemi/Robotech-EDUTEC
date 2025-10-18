@@ -335,7 +335,9 @@
     <script>
       document.getElementById('year').textContent = new Date().getFullYear();
 
-      const API_URL = 'http://localhost:5001';
+      const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+        ? 'http://localhost:5001'
+        : window.location.origin;
 
       // Funções de modal
       function abrirModal(modalId) {
@@ -411,8 +413,9 @@
           const data = await response.json();
           
           if (response.ok) {
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('userName', data.user.name);
+            localStorage.setItem('token', data.data.token);
+            localStorage.setItem('userName', data.data.name);
+            localStorage.setItem('usuario', JSON.stringify(data.data));
             fecharModal('modalLogin');
             atualizarUI();
             alert('Login realizado com sucesso!');
@@ -462,8 +465,9 @@
           const data = await response.json();
           
           if (response.ok) {
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('userName', data.user.name);
+            localStorage.setItem('token', data.data.token);
+            localStorage.setItem('userName', data.data.name);
+            localStorage.setItem('usuario', JSON.stringify(data.data));
             fecharModal('modalCadastro');
             atualizarUI();
             alert('Conta criada com sucesso!');
