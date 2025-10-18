@@ -9,7 +9,7 @@ function getModel() {
   if (modelInstance) return modelInstance;
   const genAI = new GoogleGenerativeAI(API_KEY);
   modelInstance = genAI.getGenerativeModel({
-    model: "gemini-1.5-flash",
+    model: "gemini-2.0-flash",
     generationConfig: {
       temperature: 0.9,
       topK: 50,
