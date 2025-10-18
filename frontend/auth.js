@@ -3,7 +3,9 @@
  * Funções utilitárias para gerenciar autenticação no frontend
  */
 
-const API_URL = 'http://localhost:5000';
+const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  ? 'http://localhost:5001'
+  : window.location.origin;
 
 // Verificar se usuário está autenticado
 function isAuthenticated() {
