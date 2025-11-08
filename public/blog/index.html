@@ -10,23 +10,24 @@
     <link rel="stylesheet" href="../styles.css">
     <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body class="pagina-protegida" data-login-url="../autenticacao.html#login" data-home-url="../index.html" data-api-url="http://localhost:5001">
     
-  <header class="site-header">
-    <div class="container nav">
-      <a href="../index.html" class="brand" aria-label="RoboTech">
-        <img src="../images.home/logo 1 (2).png" alt="RoboTech" class="brand-img" />
+  <header class="cabecalho-site">
+    <div class="container faixa-navegacao">
+      <a href="../index.html" class="marca" aria-label="RoboTech">
+        <img src="../images.home/logo 1 (2).png" alt="RoboTech" class="marca-img" />
       </a>
-      <nav class="main-nav">
-        <a href="../teste-aulas-Copia/index.html">Aulas</a>
-        <a href="../game/index.html">Game</a>
-        <a href="index.html">Blog</a>
+      <nav class="menu-principal">
+        <a href="../teste-aulas-Copia/aula.html" data-protegido>Aulas</a>
+        <a href="../game/index.html" data-protegido>Game</a>
+        <a href="index.html" data-protegido>Blog</a>
       </nav>
+      <a class="botao botao-fantasma botao-login" href="../autenticacao.html#login" data-botao-login>
+        <i class="ri-user-line"></i>
+        Entrar
+      </a>
     </div>
   </header>
-            </div>
-        </nav>
-    </header>
 
     <section class="secao-titulo-blog">
         <h1 class="titulo-blog">BLOG</h1>
@@ -188,6 +189,7 @@
             </article>
         </div>
     </section>
+  <script src="../proteger-acesso.js"></script>
 </body>
 </html>
 

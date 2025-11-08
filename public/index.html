@@ -12,103 +12,103 @@
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
 
     <link rel="stylesheet" href="styles.css" />
-    <link rel="stylesheet" href="modal-auth.css" />
   </head>
-  <body>
-    <header class="site-header">
-      <div class="container nav">
-        <a href="#" class="brand" aria-label="RoboTech">
-          <img src="images.home/logo 1 (2).png" alt="RoboTech" class="brand-img" />
+  <body data-login-url="autenticacao.html#login" data-home-url="index.html" data-api-url="http://localhost:5001">
+    <header class="cabecalho-site">
+      <div class="container faixa-navegacao">
+        <a href="#" class="marca" aria-label="RoboTech">
+          <img src="images.home/logo 1 (2).png" alt="RoboTech" class="marca-img" />
         </a>
-        <nav class="main-nav">
-          <a href="teste-aulas-Copia/aula.html">Aulas</a>
-          <a href="game/index.html">Game</a>
-          <a href="blog/index.html">Blog</a>
+        <nav class="menu-principal">
+          <a href="teste-aulas-Copia/aula.html" data-protegido>Aulas</a>
+          <a href="game/index.html" data-protegido>Game</a>
+          <a href="blog/index.html" data-protegido>Blog</a>
         </nav>
-        <button class="btn-entrar" id="btnEntrar" onclick="abrirModal('modalLogin')" style="display: none;">
-          <i class="ri-user-line"></i> Entrar
-        </button>
+        <a class="botao botao-fantasma botao-login" href="autenticacao.html#login" data-botao-login>
+          <i class="ri-user-line"></i>
+          Entrar
+        </a>
       </div>
     </header>
 
     <main>
-      <section class="hero">
-        <div class="container hero-grid">
-          <div class="hero-copy">
+      <section class="destaque">
+        <div class="container grade-destaque">
+          <div class="conteudo-destaque">
             <h1>
-              <span class="kicker text-gradient">&lt;Comece a Programar/&gt;</span>
-              <span class="title">{ Do Zero ao Pro }</span>
+              <span class="chamada gradiente-texto">&lt;Comece a Programar/&gt;</span>
+              <span class="titulo">{ Do Zero ao Pro }</span>
             </h1>
-            <img src="images.home/listras.png" alt="listras decorativas" class="stripes" />
-            <p class="lead">Desvende o mundo da programação com nossos cursos completos!</p>
-            <div class="hero-actions">
-              <a class="btn btn-primary btn-lg hero-cta" href="teste-aulas-Copia/index.html">Comece agora</a>
+            <img src="images.home/listras.png" alt="listras decorativas" class="listras" />
+            <p class="texto-destaque">Desvende o mundo da programação com nossos cursos completos!</p>
+            <div class="acoes-destaque">
+              <a class="botao botao-primario botao-grande cta-destaque" href="teste-aulas-Copia/index.html" data-protegido>Comece agora</a>
             </div>
           </div>
 
-          <div class="hero-visual">
-            <img src="images.home/imageback.png" alt="Fundo colorido atrás da janela" class="back" />
-            <img src="images.home/imageright.png" alt="Janela de código ilustrativa" class="frame" />
+          <div class="visual-destaque">
+            <img src="images.home/imageback.png" alt="Fundo colorido atrás da janela" class="fundo" />
+            <img src="images.home/imageright.png" alt="Janela de código ilustrativa" class="moldura" />
             <img src="teste-aulas-Copia/Ativo 8 1.png" alt="Mascote RoboTech" class="robo" />
           </div>
         </div>
       </section>
 
-      <section class="pitch">
-        <div class="container center">
+      <section class="proposta">
+        <div class="container texto-central">
           <h2>Quer dar seus primeiros passos na programação de forma divertida e eficaz?</h2>
-          <div class="pill-row">
-            <span class="pill pill--pink">Gratuito</span>
-            <span class="pill pill--purple">Pratico</span>
-            <span class="pill pill--green">Educativo</span>
+          <div class="linha-selos">
+            <span class="selo selo--rosa">Gratuito</span>
+            <span class="selo selo--roxo">Pratico</span>
+            <span class="selo selo--verde">Educativo</span>
           </div>
         </div>
       </section>
 
-      <section id="aulas" class="courses">
+      <section id="aulas" class="cursos">
         <div class="container">
           <h3>Conheça nossas aulas</h3>
-          <div class="cards">
-            <article class="card">
-              <div class="card-media icon"><i class="ri-lightbulb-flash-fill"></i></div>
-              <div class="card-body">
+          <div class="grade-cartoes">
+            <article class="cartao">
+              <div class="midia-cartao icone"><i class="ri-lightbulb-flash-fill"></i></div>
+              <div class="corpo-cartao">
                 <h4>Lógica de programação</h4>
                 <p>Aula com boas doses de lógica e prática.</p>
-                <div class="meta"><span><i class="ri-time-line"></i> 45 min</span><span><i class="ri-user-3-line"></i> 9.3k</span></div>
+                <div class="informacoes"><span><i class="ri-time-line"></i> 45 min</span><span><i class="ri-user-3-line"></i> 9.3k</span></div>
               </div>
             </article>
-            <article class="card">
-              <div class="card-media icon"><i class="ri-code-box-fill"></i></div>
-              <div class="card-body">
+            <article class="cartao">
+              <div class="midia-cartao icone"><i class="ri-code-box-fill"></i></div>
+              <div class="corpo-cartao">
                 <h4>Algoritmos</h4>
                 <p>Conheça as etapas de instruções para resolver um problema.</p>
-                <div class="meta"><span><i class="ri-time-line"></i> 1h 05</span><span><i class="ri-user-3-line"></i> 7.8k</span></div>
+                <div class="informacoes"><span><i class="ri-time-line"></i> 1h 05</span><span><i class="ri-user-3-line"></i> 7.8k</span></div>
               </div>
             </article>
-            <article class="card">
-              <div class="card-media icon"><i class="ri-html5-fill"></i></div>
-              <div class="card-body">
+            <article class="cartao">
+              <div class="midia-cartao icone"><i class="ri-html5-fill"></i></div>
+              <div class="corpo-cartao">
                 <h4>Conhecendo as linguagens</h4>
                 <p>Entenda HTML, CSS e JavaScript na prática.</p>
-                <div class="meta"><span><i class="ri-time-line"></i> 40 min</span><span><i class="ri-user-3-line"></i> 6.0k</span></div>
+                <div class="informacoes"><span><i class="ri-time-line"></i> 40 min</span><span><i class="ri-user-3-line"></i> 6.0k</span></div>
               </div>
             </article>
           </div>
         </div>
       </section>
 
-      <section class="highlights">
+      <section class="destaques">
         <div class="container">
-          <div class="tweet">
-            <div class="tweet-head">
+          <div class="depoimento">
+            <div class="cabecalho-depoimento">
               <span class="avatar">L</span>
               <div>
                 <strong>@_Larinha_10</strong>
-                <span class="muted">· agora</span>
+                <span class="texto-suave">· agora</span>
               </div>
             </div>
             <p>Qual caminho para iniciar o código na web?</p>
-            <div class="tweet-actions">
+            <div class="acoes-depoimento">
               <span><i class="ri-chat-3-line"></i> 22</span>
               <span><i class="ri-loop-left-line"></i> 10</span>
               <span><i class="ri-heart-3-line"></i> 148</span>
@@ -118,69 +118,69 @@
         </div>
       </section>
 
-      <section class="featured-video">
+      <section class="video-destaque">
         <div class="container">
-          <div class="video-frame">
+          <div class="moldura-video">
             <iframe title="RoboTech" width="560" height="315" src="https://www.youtube.com/embed/Lj0UQd358PU?si=Zqe6xl-I_xLG1rwj" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
           </div>
         </div>
       </section>
 
-      <section id="blog" class="blog">
+      <section id="blog" class="secao-blog">
         <div class="container">
           <h3>Artigos do blog recentes</h3>
-          <div class="cards blog-grid">
-            <article class="card blog-card">
-              <div class="thumb ai"></div>
-              <div class="card-body">
+          <div class="grade-cartoes grade-blog">
+            <article class="cartao cartao-blog">
+              <div class="miniatura ai"></div>
+              <div class="corpo-cartao">
                 <h4>Gamificação na educação</h4>
                 <p>A gamificação na educação é uma abordagem que aumenta o interesse dos alunos…</p>
-                <span class="muted">5 min de leitura</span>
+                <span class="texto-suave">5 min de leitura</span>
               </div>
             </article>
-            <article class="card blog-card">
-              <div class="thumb access"></div>
-              <div class="card-body">
+            <article class="cartao cartao-blog">
+              <div class="miniatura access"></div>
+              <div class="corpo-cartao">
                 <h4>Acessibilidade e educação</h4>
                 <p>Ao adotar elementos como contraste e navegação por teclado, ampliamos o acesso…</p>
-                <span class="muted">7 min de leitura</span>
+                <span class="texto-suave">7 min de leitura</span>
               </div>
             </article>
-            <article class="card blog-card">
-              <div class="thumb future"></div>
-              <div class="card-body">
+            <article class="cartao cartao-blog">
+              <div class="miniatura future"></div>
+              <div class="corpo-cartao">
                 <h4>O futuro da educação com IA</h4>
                 <p>A integração da IA no ensino permite experiências personalizadas e inclusivas…</p>
-                <span class="muted">8 min de leitura</span>
+                <span class="texto-suave">8 min de leitura</span>
               </div>
             </article>
           </div>
         </div>
       </section>
 
-      <section id="cta" class="cta">
+      <section id="cta" class="secao-cta">
         <div class="container">
-          <div class="cta-box">
+          <div class="caixa-cta">
             <h3>Que tal transformar o "difícil" em "fácil" e dar o primeiro passo para uma nova carreira?</h3>
             <p>Você já se imaginou criando seus próprios aplicativos, jogos ou sites? Aqui o aprendizado pode te levar a um mundo de possibilidades e oportunidades. E se eu te dissermos que aprender a programar pode ser mais fácil do que você imagina?</p>
-            <div class="hero-actions">
-              <a class="btn btn-primary btn-lg" href="teste-aulas-Copia/index.html">Quero começar</a>
-              <a class="btn btn-ghost btn-lg" href="#aulas">Ver conteúdo</a>
+            <div class="acoes-destaque">
+              <a class="botao botao-primario botao-grande" href="teste-aulas-Copia/index.html">Quero começar</a>
+              <a class="botao botao-fantasma botao-grande" href="#aulas">Ver conteúdo</a>
             </div>
           </div>
         </div>
       </section>
     </main>
 
-    <footer class="site-footer">
-      <div class="footer-gradient"></div>
-      <div class="container footer-grid">
-        <div class="foot-brand">
-          <div class="brand"><img src="images.home/logo 1 (2).png" alt="RoboTech" class="brand-img" /></div>
-          <p class="muted">Transformamos a educação com tecnologia, aproximando o mercado e a sala de aula.</p>
-          <small class="muted">© <span id="year"></span> RoboTech. Todos os direitos reservados.</small>
+    <footer class="rodape-site">
+      <div class="gradiente-rodape"></div>
+      <div class="container grade-rodape">
+        <div class="marca-rodape">
+          <div class="marca-logo"><img src="images.home/logo 1 (2).png" alt="RoboTech" class="marca-img" /></div>
+          <p class="texto-suave">Transformamos a educação com tecnologia, aproximando o mercado e a sala de aula.</p>
+          <small class="texto-suave">© <span id="year"></span> RoboTech. Todos os direitos reservados.</small>
         </div>
-        <nav class="foot-links">
+        <nav class="links-rodape">
           <div>
             <h5>Legal e suporte</h5>
             <a href="#">Política de privacidade</a>
@@ -194,330 +194,12 @@
             <a href="#"><i class="ri-youtube-fill"></i> YouTube</a>
           </div>
         </nav>
-        
-        </div>
       </div>
     </footer>
 
-    <!-- Modais de Autenticação -->
-    <!-- Modal de Login -->
-    <div id="modalLogin" class="modal">
-      <div class="modal-content">
-        <span class="modal-close" onclick="fecharModal('modalLogin')">&times;</span>
-        <h2>Entrar na sua conta</h2>
-        <p class="modal-subtitle">Acesse a plataforma RoboTech</p>
-        
-        <div id="erroLogin" class="mensagem-error" style="display: none;"></div>
-        
-        <form id="formLogin" onsubmit="handleLogin(event)">
-          <div class="form-group">
-            <label for="emailLogin">
-              <i class="ri-mail-line"></i> Email
-            </label>
-            <input type="email" id="emailLogin" required placeholder="seu@email.com">
-          </div>
-          
-          <div class="form-group">
-            <label for="senhaLogin">
-              <i class="ri-lock-line"></i> Senha
-            </label>
-            <input type="password" id="senhaLogin" required placeholder="••••••••">
-          </div>
-          
-          <button type="submit" class="btn-modal btn-modal-primary" id="btnSubmitLogin">
-            <i class="ri-login-box-line"></i> Entrar
-          </button>
-        </form>
-        
-        <div class="modal-links">
-          <a href="#" onclick="trocarModal('modalLogin', 'modalCadastro')">
-            <i class="ri-user-add-line"></i> Criar nova conta
-          </a>
-          <a href="#" onclick="trocarModal('modalLogin', 'modalEsqueceu')">
-            <i class="ri-lock-unlock-line"></i> Esqueceu a senha?
-          </a>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal de Cadastro -->
-    <div id="modalCadastro" class="modal">
-      <div class="modal-content">
-        <span class="modal-close" onclick="fecharModal('modalCadastro')">&times;</span>
-        <h2>Criar nova conta</h2>
-        <p class="modal-subtitle">Junte-se à comunidade RoboTech</p>
-        
-        <div id="erroCadastro" class="mensagem-error" style="display: none;"></div>
-        
-        <form id="formCadastro" onsubmit="handleCadastro(event)">
-          <div class="form-group">
-            <label for="nomeCadastro">
-              <i class="ri-user-line"></i> Nome Completo
-            </label>
-            <input type="text" id="nomeCadastro" required placeholder="Seu nome">
-          </div>
-          
-          <div class="form-group">
-            <label for="emailCadastro">
-              <i class="ri-mail-line"></i> Email
-            </label>
-            <input type="email" id="emailCadastro" required placeholder="seu@email.com">
-          </div>
-          
-          <div class="form-group">
-            <label for="senhaCadastro">
-              <i class="ri-lock-line"></i> Senha
-            </label>
-            <input type="password" id="senhaCadastro" required minlength="6" placeholder="Mínimo 6 caracteres">
-          </div>
-          
-          <div class="form-group">
-            <label for="confirmarSenhaCadastro">
-              <i class="ri-lock-line"></i> Confirmar Senha
-            </label>
-            <input type="password" id="confirmarSenhaCadastro" required placeholder="Digite a senha novamente">
-          </div>
-          
-          <div class="form-group">
-            <label for="tipoConta">
-              <i class="ri-shield-user-line"></i> Tipo de Conta
-            </label>
-            <select id="tipoConta">
-              <option value="student">Estudante</option>
-              <option value="teacher">Professor</option>
-            </select>
-          </div>
-          
-          <button type="submit" class="btn-modal btn-modal-primary" id="btnSubmitCadastro">
-            <i class="ri-user-add-line"></i> Criar Conta
-          </button>
-        </form>
-        
-        <div class="modal-links">
-          <a href="#" onclick="trocarModal('modalCadastro', 'modalLogin')">
-            <i class="ri-login-box-line"></i> Já possui uma conta?
-          </a>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal de Recuperação de Senha -->
-    <div id="modalEsqueceu" class="modal">
-      <div class="modal-content">
-        <span class="modal-close" onclick="fecharModal('modalEsqueceu')">&times;</span>
-        <h2>Recuperar senha</h2>
-        <p class="modal-subtitle">Enviaremos instruções para seu email</p>
-        
-        <div id="erroEsqueceu" class="mensagem-error" style="display: none;"></div>
-        <div id="sucessoEsqueceu" class="mensagem-success" style="display: none;"></div>
-        
-        <form id="formEsqueceu" onsubmit="handleEsqueceuSenha(event)">
-          <div class="form-group">
-            <label for="emailEsqueceu">
-              <i class="ri-mail-line"></i> Email
-            </label>
-            <input type="email" id="emailEsqueceu" required placeholder="seu@email.com">
-          </div>
-          
-          <button type="submit" class="btn-modal btn-modal-primary" id="btnSubmitEsqueceu">
-            <i class="ri-mail-send-line"></i> Enviar Instruções
-          </button>
-        </form>
-        
-        <div class="modal-links">
-          <a href="#" onclick="trocarModal('modalEsqueceu', 'modalLogin')">
-            <i class="ri-arrow-left-line"></i> Voltar ao login
-          </a>
-        </div>
-      </div>
-    </div>
-
+    <script src="proteger-acesso.js"></script>
     <script>
       document.getElementById('year').textContent = new Date().getFullYear();
-
-      const API_URL = 'http://localhost:5001';
-
-      // Funções de modal
-      function abrirModal(modalId) {
-        document.getElementById(modalId).style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-      }
-
-      function fecharModal(modalId) {
-        document.getElementById(modalId).style.display = 'none';
-        document.body.style.overflow = 'auto';
-        // Limpar mensagens de erro
-        const erroEl = document.getElementById('erro' + modalId.replace('modal', ''));
-        if (erroEl) erroEl.style.display = 'none';
-      }
-
-      function trocarModal(modalAtual, modalNovo) {
-        fecharModal(modalAtual);
-        setTimeout(() => abrirModal(modalNovo), 100);
-        return false;
-      }
-
-      // Verificar se está logado
-      function estaLogado() {
-        return !!localStorage.getItem('token');
-      }
-
-      // Atualizar UI baseado no estado de autenticação
-      function atualizarUI() {
-        const btnEntrar = document.getElementById('btnEntrar');
-        if (estaLogado()) {
-          const userName = localStorage.getItem('userName') || 'Usuário';
-          btnEntrar.innerHTML = `<i class="ri-user-line"></i> ${userName}`;
-          btnEntrar.onclick = () => {
-            if (confirm('Deseja sair da sua conta?')) {
-              localStorage.removeItem('token');
-              localStorage.removeItem('userName');
-              location.reload();
-            }
-          };
-        }
-      }
-
-      // Verificar acesso protegido (removido - agora tudo é público)
-      function verificarAcessoProtegido(event, url) {
-        return true; // Sempre permite acesso
-      }
-
-      // Handle Login
-      async function handleLogin(event) {
-        event.preventDefault();
-        
-        const email = document.getElementById('emailLogin').value;
-        const password = document.getElementById('senhaLogin').value;
-        const btnSubmit = document.getElementById('btnSubmitLogin');
-        const erroEl = document.getElementById('erroLogin');
-        
-        btnSubmit.disabled = true;
-        btnSubmit.innerHTML = '<i class="ri-loader-4-line"></i> Entrando...';
-        erroEl.style.display = 'none';
-        
-        try {
-          const response = await fetch(`${API_URL}/api/auth/login`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password })
-          });
-          
-          const data = await response.json();
-          
-          if (response.ok) {
-            localStorage.setItem('token', data.data.token);
-            localStorage.setItem('userName', data.data.name);
-            localStorage.setItem('usuario', JSON.stringify(data.data));
-            fecharModal('modalLogin');
-            atualizarUI();
-            alert('Login realizado com sucesso!');
-          } else {
-            erroEl.textContent = data.error || 'Erro ao fazer login';
-            erroEl.style.display = 'block';
-          }
-        } catch (error) {
-          erroEl.textContent = 'Erro ao conectar com o servidor';
-          erroEl.style.display = 'block';
-        } finally {
-          btnSubmit.disabled = false;
-          btnSubmit.innerHTML = '<i class="ri-login-box-line"></i> Entrar';
-        }
-      }
-
-      // Handle Cadastro
-      async function handleCadastro(event) {
-        event.preventDefault();
-        
-        const name = document.getElementById('nomeCadastro').value;
-        const email = document.getElementById('emailCadastro').value;
-        const password = document.getElementById('senhaCadastro').value;
-        const confirmPassword = document.getElementById('confirmarSenhaCadastro').value;
-        const role = document.getElementById('tipoConta').value;
-        const btnSubmit = document.getElementById('btnSubmitCadastro');
-        const erroEl = document.getElementById('erroCadastro');
-        
-        erroEl.style.display = 'none';
-        
-        if (password !== confirmPassword) {
-          erroEl.textContent = 'As senhas não coincidem';
-          erroEl.style.display = 'block';
-          return;
-        }
-        
-        btnSubmit.disabled = true;
-        btnSubmit.innerHTML = '<i class="ri-loader-4-line"></i> Criando conta...';
-        
-        try {
-          const response = await fetch(`${API_URL}/api/auth/register`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, email, password, role })
-          });
-          
-          const data = await response.json();
-          
-          if (response.ok) {
-            localStorage.setItem('token', data.data.token);
-            localStorage.setItem('userName', data.data.name);
-            localStorage.setItem('usuario', JSON.stringify(data.data));
-            fecharModal('modalCadastro');
-            atualizarUI();
-            alert('Conta criada com sucesso!');
-          } else {
-            erroEl.textContent = data.error || 'Erro ao criar conta';
-            erroEl.style.display = 'block';
-          }
-        } catch (error) {
-          erroEl.textContent = 'Erro ao conectar com o servidor';
-          erroEl.style.display = 'block';
-        } finally {
-          btnSubmit.disabled = false;
-          btnSubmit.innerHTML = '<i class="ri-user-add-line"></i> Criar Conta';
-        }
-      }
-
-      // Handle Esqueceu Senha
-      async function handleEsqueceuSenha(event) {
-        event.preventDefault();
-        
-        const email = document.getElementById('emailEsqueceu').value;
-        const btnSubmit = document.getElementById('btnSubmitEsqueceu');
-        const erroEl = document.getElementById('erroEsqueceu');
-        const sucessoEl = document.getElementById('sucessoEsqueceu');
-        
-        btnSubmit.disabled = true;
-        btnSubmit.innerHTML = '<i class="ri-loader-4-line"></i> Enviando...';
-        erroEl.style.display = 'none';
-        sucessoEl.style.display = 'none';
-        
-        try {
-          // Simular envio (você pode implementar a rota no backend depois)
-          setTimeout(() => {
-            sucessoEl.textContent = 'Instruções enviadas para seu email!';
-            sucessoEl.style.display = 'block';
-            btnSubmit.disabled = false;
-            btnSubmit.innerHTML = '<i class="ri-mail-send-line"></i> Enviar Instruções';
-          }, 1500);
-        } catch (error) {
-          erroEl.textContent = 'Erro ao enviar email';
-          erroEl.style.display = 'block';
-          btnSubmit.disabled = false;
-          btnSubmit.innerHTML = '<i class="ri-mail-send-line"></i> Enviar Instruções';
-        }
-      }
-
-      // Fechar modal ao clicar fora
-      window.onclick = function(event) {
-        if (event.target.classList.contains('modal')) {
-          event.target.style.display = 'none';
-          document.body.style.overflow = 'auto';
-        }
-      };
-
-      // Inicializar UI
-      atualizarUI();
     </script>
   </body>
-  </html>
-
+</html>

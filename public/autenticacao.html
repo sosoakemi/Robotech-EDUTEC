@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Autenticação • RoboTech</title>
+    <meta name="description" content="Acesse sua conta RoboTech ou crie um novo cadastro." />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="autenticacao.css" />
+  </head>
+  <body class="pagina-autenticacao">
+    <header class="topo-autenticacao">
+      <div class="faixa topo-conteudo">
+        <a href="index.html" class="marca-topo">
+          <i class="ri-arrow-left-line"></i>
+          Voltar para a Home
+        </a>
+        <span class="titulo-topo">RoboTech • Acesso</span>
+      </div>
+    </header>
+
+    <main class="principal-autenticacao">
+      <div class="container-autenticacao">
+        <div class="painel-autenticacao">
+          <div class="cabecalho-painel">
+            <h1 class="titulo-painel">Entre ou crie sua conta</h1>
+            <p class="descricao-painel">
+              Utilize seu e-mail para entrar na plataforma ou faça seu cadastro em poucos segundos.
+            </p>
+          </div>
+
+          <div class="abas-autenticacao">
+            <button class="aba ativa" data-alvo="#login">Já tenho conta</button>
+            <button class="aba" data-alvo="#cadastro">Quero me cadastrar</button>
+          </div>
+
+          <section id="login" class="area-formulario ativa">
+            <h2 class="titulo-area">Entrar na conta</h2>
+            <form id="formLogin" class="formulario">
+              <div class="grupo-campo">
+                <label for="loginEmail">Email</label>
+                <input type="email" id="loginEmail" class="campo" placeholder="voce@email.com" required />
+              </div>
+
+              <div class="grupo-campo">
+                <label for="loginSenha">Senha</label>
+                <input type="password" id="loginSenha" class="campo" placeholder="Sua senha" required />
+              </div>
+
+              <div class="acoes-formulario">
+                <button type="button" class="link-formulario" data-abrir="esqueci">
+                  <i class="ri-lock-unlock-line"></i>
+                  Esqueceu a sua senha?
+                </button>
+              </div>
+
+              <div class="mensagem" id="mensagemLogin" role="alert"></div>
+
+              <button type="submit" class="botao-acao">
+                <i class="ri-login-box-line"></i>
+                Entrar
+              </button>
+            </form>
+          </section>
+
+          <section id="cadastro" class="area-formulario">
+            <h2 class="titulo-area">Criar nova conta</h2>
+            <form id="formCadastro" class="formulario">
+              <div class="grupo-campo">
+                <label for="cadastroNome">Nome completo</label>
+                <input type="text" id="cadastroNome" class="campo" placeholder="Como deseja ser chamado" required />
+              </div>
+
+              <div class="grupo-campo">
+                <label for="cadastroEmail">Email</label>
+                <input type="email" id="cadastroEmail" class="campo" placeholder="voce@email.com" required />
+              </div>
+
+              <div class="grupo-campo">
+                <label for="cadastroSenha">Senha</label>
+                <input type="password" id="cadastroSenha" class="campo" placeholder="Mínimo 6 caracteres" minlength="6" required />
+              </div>
+
+              <div class="grupo-campo">
+                <label for="cadastroConfirmacao">Confirmar senha</label>
+                <input type="password" id="cadastroConfirmacao" class="campo" placeholder="Repita a senha" minlength="6" required />
+              </div>
+
+              <div class="mensagem" id="mensagemCadastro" role="alert"></div>
+
+              <button type="submit" class="botao-acao">
+                <i class="ri-user-add-line"></i>
+                Criar conta
+              </button>
+            </form>
+          </section>
+
+          <section id="esqueci" class="area-formulario">
+            <h2 class="titulo-area">Redefinir senha</h2>
+            <p class="descricao-area">
+              Informe o email da sua conta e uma nova senha. Vamos atualizar o acesso imediatamente.
+            </p>
+            <form id="formEsqueci" class="formulario">
+              <div class="grupo-campo">
+                <label for="esqueciEmail">Email cadastrado</label>
+                <input type="email" id="esqueciEmail" class="campo" placeholder="voce@email.com" required />
+              </div>
+
+              <div class="grupo-campo">
+                <label for="esqueciNovaSenha">Nova senha</label>
+                <input type="password" id="esqueciNovaSenha" class="campo" placeholder="Mínimo 6 caracteres" minlength="6" required />
+              </div>
+
+              <div class="grupo-campo">
+                <label for="esqueciConfirmacao">Confirmar nova senha</label>
+                <input type="password" id="esqueciConfirmacao" class="campo" placeholder="Repita a nova senha" minlength="6" required />
+              </div>
+
+              <div class="mensagem" id="mensagemEsqueci" role="alert"></div>
+
+              <div class="acoes-formulario">
+                <button type="button" class="link-formulario" data-abrir="login">
+                  <i class="ri-arrow-left-line"></i>
+                  Voltar para login
+                </button>
+              </div>
+
+              <button type="submit" class="botao-acao">
+                <i class="ri-key-line"></i>
+                Atualizar senha
+              </button>
+            </form>
+          </section>
+        </div>
+      </div>
+    </main>
+
+    <footer class="rodape-autenticacao">
+      <small>© <span id="anoAtual"></span> RoboTech. Todos os direitos reservados.</small>
+    </footer>
+
+    <script src="autenticacao.js"></script>
+  </body>
+</html>
