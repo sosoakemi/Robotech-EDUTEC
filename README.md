@@ -34,6 +34,7 @@ Durante esse processo, aplicamos conhecimentos em **HTML, CSS, JavaScript**, al√
 - Lara Freitas  
 - Murillo Zanni
 
+---
 
 
 
