@@ -53,8 +53,8 @@ async function handleLogin(evento) {
     const dados = await resposta.json();
     
     if (resposta.ok && dados.success) {
-      localStorage.setItem('token', dados.data.token);
-      localStorage.setItem('usuario', JSON.stringify(dados.data));
+      sessionStorage.setItem('token', dados.data.token);
+      sessionStorage.setItem('usuario', JSON.stringify(dados.data));
       
       fecharModal('modalLogin');
       window.location.reload();
@@ -102,8 +102,8 @@ async function handleCadastro(evento) {
     const dados = await resposta.json();
     
     if (resposta.ok && dados.success) {
-      localStorage.setItem('token', dados.data.token);
-      localStorage.setItem('usuario', JSON.stringify(dados.data));
+      sessionStorage.setItem('token', dados.data.token);
+      sessionStorage.setItem('usuario', JSON.stringify(dados.data));
       
       fecharModal('modalCadastro');
       window.location.reload();
@@ -145,7 +145,7 @@ async function handleEsqueceuSenha(evento) {
 
 // Verificar se usuário está logado
 function verificarAutenticacao() {
-  const usuario = localStorage.getItem('usuario');
+  const usuario = sessionStorage.getItem('usuario');
   const btnEntrar = document.getElementById('btnEntrar');
   
   if (usuario) {
@@ -158,8 +158,8 @@ function verificarAutenticacao() {
 function mostrarMenuUsuario() {
   const confirmarSaida = confirm('Deseja sair da sua conta?');
   if (confirmarSaida) {
-    localStorage.removeItem('token');
-    localStorage.removeItem('usuario');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('usuario');
     window.location.reload();
   }
 }

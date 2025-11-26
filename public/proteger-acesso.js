@@ -8,12 +8,12 @@
   }
 
   function estaLogado() {
-    return !!localStorage.getItem('usuarioAtual');
+    return !!sessionStorage.getItem('usuarioAtual');
   }
 
   function obterUsuarioAtual() {
     try {
-      return JSON.parse(localStorage.getItem('usuarioAtual') || '{}');
+      return JSON.parse(sessionStorage.getItem('usuarioAtual') || '{}');
     } catch (erro) {
       return {};
     }
@@ -54,7 +54,7 @@
     };
     menu.querySelector('[data-acao="sair"]').onclick = () => {
       if (confirm('Deseja sair da sua conta?')) {
-        localStorage.removeItem('usuarioAtual');
+        sessionStorage.removeItem('usuarioAtual');
         sessionStorage.removeItem('destinoProtegido');
         fecharMenuUsuario();
         window.location.href = new URL(homeUrl, window.location.href).href;
@@ -78,7 +78,7 @@
           throw new Error(dados.erro || 'Erro ao excluir conta.');
         }
         alert('Conta removida com sucesso. Sentiremos sua falta!');
-        localStorage.removeItem('usuarioAtual');
+        sessionStorage.removeItem('usuarioAtual');
         sessionStorage.removeItem('destinoProtegido');
         fecharMenuUsuario();
         window.location.href = new URL(homeUrl, window.location.href).href;

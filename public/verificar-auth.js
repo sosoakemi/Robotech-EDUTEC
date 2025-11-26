@@ -5,8 +5,8 @@
 
 (function() {
   // Verificar se usuário está autenticado
-  const token = localStorage.getItem('token');
-  const usuario = localStorage.getItem('usuario');
+  const token = sessionStorage.getItem('token');
+  const usuario = sessionStorage.getItem('usuario');
   
   if (!token || !usuario) {
     // Usuário não está logado - redirecionar para home
@@ -26,7 +26,7 @@
       }
     } catch (erro) {
       console.error('Erro ao verificar usuário:', erro);
-      localStorage.clear();
+      sessionStorage.clear();
       window.location.href = '/index.html';
     }
   }

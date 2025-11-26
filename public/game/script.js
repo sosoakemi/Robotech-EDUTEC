@@ -193,6 +193,39 @@ cards.forEach(card => card.addEventListener(`click`, flipCard));
             painelDica.style.display = painelDica.style.display === 'none' ? 'block' : 'none';
         }
 
+        async function salvarPontuacao() {
+            const usuarioAtual = JSON.parse(sessionStorage.getItem('usuarioAtual') || 'null');
+            if (!usuarioAtual || !usuarioAtual.id) {
+                console.log('Usuário não logado, pontuação não será salva.');
+                return;
+            }
+
+            const API_URL = document.body.getAttribute('data-api-url') || 'http://localhost:5001';
+            
+            try {
+                const resposta = await fetch(`${API_URL}/usuarios/${usuarioAtual.id}/jogos`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        jogo: 'coderobotech',
+                        pontuacao: pontuacaoQuest,
+                        nivel: nivelAtualQuest,
+                        observacoes: `Completou ${nivelAtualQuest} níveis`
+                    })
+                });
+
+                if (resposta.ok) {
+                    console.log('Pontuação salva com sucesso!');
+                } else {
+                    console.error('Erro ao salvar pontuação');
+                }
+            } catch (erro) {
+                console.error('Erro ao salvar pontuação:', erro);
+            }
+        }
+
         function proximoNivelQuest() {
             document.getElementById('celebracao-quest').style.display = 'none';
             
@@ -203,6 +236,13 @@ cards.forEach(card => card.addEventListener(`click`, flipCard));
                
                 document.getElementById('saida-quest').innerHTML = '🎉 Parabéns! Você completou todos os desafios do CodeQuest!\n\nPontuação final: ' + pontuacaoQuest + ' pontos';
                 document.getElementById('saida-quest').className = 'saida sucesso';
+                
+                const btnExec = document.getElementById('botao-executar-quest');
+                if (btnExec) btnExec.disabled = true;
+                salvarPontuacao();
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
             }
         }
 

@@ -124,6 +124,9 @@
                             <button class="botao botao-secundario" id="botao-dica-quest">
                                 <i class="ri-lightbulb-line"></i> Dica
                             </button>
+                            <button class="botao botao-secundario" id="botao-ranking" title="Ver ranking">
+                                <i class="ri-trophy-line"></i> Ranking
+                            </button>
                             <button class="botao botao-sucesso" id="botao-proximo-quest" style="display: none;">
                                 <i class="ri-arrow-right-line"></i> Próximo
                             </button>
@@ -152,5 +155,27 @@
         </button>
     </div>
 
+    <!-- Modal de Ranking -->
+    <div class="modal-ranking" id="modal-ranking">
+        <div class="modal-ranking-conteudo">
+            <div class="modal-ranking-cabecalho">
+                <h2 class="modal-ranking-titulo">
+                    <i class="ri-trophy-fill"></i>
+                    Ranking CodeRoboTech
+                </h2>
+                <button class="modal-ranking-fechar" id="fechar-ranking">
+                    <i class="ri-close-line"></i>
+                </button>
+            </div>
+            <div class="modal-ranking-corpo" id="corpo-ranking">
+                <div class="ranking-carregando">
+                    <i class="ri-loader-4-line ri-spin"></i>
+                    <p>Carregando ranking...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
   <script src="../proteger-acesso.js"></script>
+  <script src="ranking.js"></script>
 </body>

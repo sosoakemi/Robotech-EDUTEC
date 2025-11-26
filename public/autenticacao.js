@@ -18,7 +18,7 @@ function mostrarArea(id) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  const usuarioAtual = localStorage.getItem('usuarioAtual');
+  const usuarioAtual = sessionStorage.getItem('usuarioAtual');
   if (usuarioAtual) {
     const destino = sessionStorage.getItem('destinoProtegido');
     if (destino) {
@@ -83,14 +83,19 @@ if (formLogin) {
         body: JSON.stringify({ email, senha })
       });
 
-      const dados = await resposta.json();
+      let dados;
+      try {
+        dados = await resposta.json();
+      } catch (parseErro) {
+        throw new Error('Servidor não respondeu corretamente. Verifique se o backend está rodando.');
+      }
 
       if (!resposta.ok) {
         throw new Error(dados.erro || 'Não foi possível entrar.');
       }
 
       mostrarMensagem(mensagemLogin, 'Login realizado com sucesso!', 'sucesso');
-      localStorage.setItem('usuarioAtual', JSON.stringify(dados.usuario));
+      sessionStorage.setItem('usuarioAtual', JSON.stringify(dados.usuario));
 
       const destino = sessionStorage.getItem('destinoProtegido');
       if (destino) {
@@ -101,7 +106,11 @@ if (formLogin) {
         window.location.href = destino || 'index.html';
       }, 600);
     } catch (erro) {
-      mostrarMensagem(mensagemLogin, erro.message || 'Erro ao realizar login.', 'erro');
+      if (erro.message.includes('Failed to fetch') || erro.message.includes('NetworkError') || erro.message.includes('load failed')) {
+        mostrarMensagem(mensagemLogin, 'Não foi possível conectar ao servidor. Verifique se o backend está rodando na porta 5001.', 'erro');
+      } else {
+        mostrarMensagem(mensagemLogin, erro.message || 'Erro ao realizar login.', 'erro');
+      }
     } finally {
       botao.disabled = false;
       botao.innerHTML = '<i class="ri-login-box-line"></i> Entrar';
@@ -138,7 +147,12 @@ if (formCadastro) {
         body: JSON.stringify({ nome, email, senha })
       });
 
-      const dados = await resposta.json();
+      let dados;
+      try {
+        dados = await resposta.json();
+      } catch (parseErro) {
+        throw new Error('Servidor não respondeu corretamente. Verifique se o backend está rodando.');
+      }
 
       if (!resposta.ok) {
         throw new Error(dados.erro || 'Não foi possível criar a conta.');
@@ -149,7 +163,11 @@ if (formCadastro) {
 
       mostrarArea('login');
     } catch (erro) {
-      mostrarMensagem(mensagemCadastro, erro.message || 'Erro ao criar conta.', 'erro');
+      if (erro.message.includes('Failed to fetch') || erro.message.includes('NetworkError') || erro.message.includes('load failed')) {
+        mostrarMensagem(mensagemCadastro, 'Não foi possível conectar ao servidor. Verifique se o backend está rodando na porta 5001.', 'erro');
+      } else {
+        mostrarMensagem(mensagemCadastro, erro.message || 'Erro ao criar conta.', 'erro');
+      }
     } finally {
       botao.disabled = false;
       botao.innerHTML = '<i class="ri-user-add-line"></i> Criar conta';
@@ -185,7 +203,12 @@ if (formEsqueci) {
         body: JSON.stringify({ email, novaSenha })
       });
 
-      const dados = await resposta.json();
+      let dados;
+      try {
+        dados = await resposta.json();
+      } catch (parseErro) {
+        throw new Error('Servidor não respondeu corretamente. Verifique se o backend está rodando.');
+      }
 
       if (!resposta.ok) {
         throw new Error(dados.erro || 'Não foi possível redefinir a senha.');
@@ -195,7 +218,11 @@ if (formEsqueci) {
       formEsqueci.reset();
       mostrarArea('login');
     } catch (erro) {
-      mostrarMensagem(mensagemEsqueci, erro.message || 'Erro ao redefinir senha.', 'erro');
+      if (erro.message.includes('Failed to fetch') || erro.message.includes('NetworkError') || erro.message.includes('load failed')) {
+        mostrarMensagem(mensagemEsqueci, 'Não foi possível conectar ao servidor. Verifique se o backend está rodando na porta 5001.', 'erro');
+      } else {
+        mostrarMensagem(mensagemEsqueci, erro.message || 'Erro ao redefinir senha.', 'erro');
+      }
     } finally {
       botao.disabled = false;
       botao.innerHTML = '<i class="ri-key-line"></i> Atualizar senha';
