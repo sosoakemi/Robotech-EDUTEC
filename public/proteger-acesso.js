@@ -1,7 +1,7 @@
 (function () {
   const loginUrl = document.body.dataset.loginUrl || 'autenticacao.html#login';
   const homeUrl = document.body.dataset.homeUrl || 'index.html';
-  const apiUrl = document.body.dataset.apiUrl || 'http://localhost:5001';
+  const apiUrl = document.body.dataset.apiUrl || 'https://backend-six-rho-46.vercel.app';
 
   function obterLoginAbsoluto(alvo) {
     return new URL(alvo, window.location.href).href;

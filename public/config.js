@@ -1,39 +1,36 @@
-// Configuração do RoboTech Chatbot
-const CONFIG = {
-    // URLs da API
-    API_URLS: {
-        development: 'http://localhost:5001/chat',
-        production: '/chat'
-    },
-    
-   
-    CHATBOT: {
-        maxRetries: 3,
-        timeout: 30000,
-        typingDelay: 1000
-    },
-    
- 
-    isProduction: () => {
-        return window.location.hostname !== 'localhost' && 
-               window.location.hostname !== '127.0.0.1' &&
-               !window.location.hostname.includes('localhost') &&
-               !window.location.hostname.includes('127.0.0.1');
-    },
-    
-   
-    getApiUrl: () => {
-        return CONFIG.isProduction() ? 
-               CONFIG.API_URLS.production : 
-               CONFIG.API_URLS.development;
+// Configuração de API - Detecta ambiente automaticamente
+(function() {
+  'use strict';
+  
+  function isProduction() {
+    if (typeof window === 'undefined' || !window.location) {
+      return true;
     }
-};
+    const hostname = window.location.hostname;
+    const isLocal = hostname === 'localhost' || 
+                    hostname === '127.0.0.1' ||
+                    hostname.includes('localhost');
+    return !isLocal;
+  }
 
+  function getApiUrl() {
+    // Em produção (Vercel), usa a URL do seu backend hospedado
+    if (isProduction()) {
+      return 'https://backend-six-rho-46.vercel.app';
+    }
+    // Em desenvolvimento, usa o backend local
+    return 'http://localhost:5001';
+  }
 
-window.RoboTechConfig = CONFIG;
-
-
-console.log('RoboTech Config carregado:', CONFIG);
-console.log('Ambiente:', CONFIG.isProduction() ? 'Produção' : 'Desenvolvimento');
-console.log('URL da API:', CONFIG.getApiUrl());
-
+  // Expõe a configuração globalmente IMEDIATAMENTE
+  if (typeof window !== 'undefined') {
+    window.APIConfig = {
+      isProduction: isProduction,
+      getApiUrl: getApiUrl,
+      API_URL: getApiUrl()
+    };
+    
+    // Debug para confirmar qual URL está sendo usada
+    console.log('[APIConfig] API URL ativa:', window.APIConfig.API_URL);
+  }
+})();
