@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificar Servidor</title>
+</head>
+<body>
+    <h1>🔍 Verificação do Servidor RoboTech</h1>
+    
+    <div id="status">
+        <h2>Status:</h2>
+        <div id="resultado">Verificando...</div>
+    </div>
+    
+    <button onclick="verificarServidor()">🔄 Verificar Novamente</button>
+    
+    <div id="instrucoes" style="margin-top: 20px; padding: 20px; background: #f0f0f0; border-radius: 10px;">
+        <h3>📋 Instruções:</h3>
+        <ol>
+            <li><strong>Se você está testando LOCALMENTE:</strong>
+                <ul>
+                    <li>Abra o terminal na pasta "teste-aulas - Copia"</li>
+                    <li>Execute: <code>npm install</code></li>
+                    <li>Execute: <code>npm start</code></li>
+                    <li>O servidor deve rodar em http://localhost:3000</li>
+                </ul>
+            </li>
+            <li><strong>Se você está testando no VERCEL:</strong>
+                <ul>
+                    <li>Faça deploy no Vercel</li>
+                    <li>Configure a variável GEMINI_API_KEY</li>
+                    <li>Teste no domínio do Vercel</li>
+                </ul>
+            </li>
+        </ol>
+    </div>
+    
+    <script>
+        async function verificarServidor() {
+            const resultado = document.getElementById('resultado');
+            resultado.innerHTML = 'Verificando...';
+            
+            // Testar se está em desenvolvimento ou produção
+            const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+            
+            if (isLocal) {
+                resultado.innerHTML = `
+                    <div style="color: orange;">
+                        <h3>🏠 Modo Local Detectado</h3>
+                        <p>Você está testando localmente. Verificando se o servidor está rodando...</p>
+                    </div>
+                `;
+                
+                // Testar se o servidor está rodando
+                try {
+                    const response = await fetch('http://localhost:3000', {
+                        method: 'GET',
+                        mode: 'cors'
+                    });
+                    
+                    if (response.ok) {
+                        resultado.innerHTML = `
+                            <div style="color: green;">
+                                <h3>✅ Servidor Local Funcionando!</h3>
+                                <p>O servidor está rodando em http://localhost:3000</p>
+                                <p>Status: ${response.status}</p>
+                            </div>
+                        `;
+                    } else {
+                        resultado.innerHTML = `
+                            <div style="color: red;">
+                                <h3>❌ Servidor Local com Problema</h3>
+                                <p>Status: ${response.status}</p>
+                                <p>Verifique se o servidor está rodando corretamente</p>
+                            </div>
+                        `;
+                    }
+                } catch (error) {
+                    resultado.innerHTML = `
+                        <div style="color: red;">
+                            <h3>❌ Servidor Local Não Encontrado</h3>
+                            <p>Erro: ${error.message}</p>
+                            <p><strong>Solução:</strong> Execute <code>npm start</code> na pasta "teste-aulas - Copia"</p>
+                        </div>
+                    `;
+                }
+            } else {
+                resultado.innerHTML = `
+                    <div style="color: blue;">
+                        <h3>🌐 Modo Produção Detectado</h3>
+                        <p>Você está testando em produção (Vercel).</p>
+                        <p>URL atual: ${window.location.href}</p>
+                    </div>
+                `;
+                
+                // Testar API de produção
+                try {
+                    const response = await fetch('/chat', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ 
+                            message: 'teste',
+                            sessionId: 'teste123'
+                        })
+                    });
+                    
+                    if (response.ok) {
+                        resultado.innerHTML = `
+                            <div style="color: green;">
+                                <h3>✅ API de Produção Funcionando!</h3>
+                                <p>O chatbot está funcionando no Vercel</p>
+                                <p>Status: ${response.status}</p>
+                            </div>
+                        `;
+                    } else {
+                        resultado.innerHTML = `
+                            <div style="color: red;">
+                                <h3>❌ API de Produção com Problema</h3>
+                                <p>Status: ${response.status}</p>
+                                <p>Verifique a configuração do Vercel</p>
+                            </div>
+                        `;
+                    }
+                } catch (error) {
+                    resultado.innerHTML = `
+                        <div style="color: red;">
+                            <h3>❌ API de Produção Não Funcionando</h3>
+                            <p>Erro: ${error.message}</p>
+                            <p><strong>Solução:</strong> Verifique o deploy no Vercel e as variáveis de ambiente</p>
+                        </div>
+                    `;
+                }
+            }
+        }
+        
+        // Verificar automaticamente ao carregar
+        window.addEventListener('load', verificarServidor);
+    </script>
+</body>
+</html>

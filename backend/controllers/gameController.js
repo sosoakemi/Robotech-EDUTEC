@@ -1,4 +1,5 @@
 const db = require('../db');
+const { query } = require('../lib/mysql');
 
 // @desc    Salvar pontuação do jogo
 // @route   POST /api/game/score
@@ -6,7 +7,7 @@ const db = require('../db');
 exports.salvarPontuacao = async (req, res) => {
   try {
     const { jogo, pontuacao, tempo, nivel, dadosExtras } = req.body;
-    const userId = req.user._id;
+    const userId = req.user.id;
 
     // Validar dados
     if (!jogo || pontuacao === undefined) {
@@ -15,68 +16,43 @@ exports.salvarPontuacao = async (req, res) => {
       });
     }
 
-    // Buscar usuário
-    const user = db.buscarUsuarioPorId(userId);
+    // Verificar usuário
+    const user = await db.buscarUsuarioPorId(userId);
     if (!user) {
-      return res.status(404).json({ 
-        error: 'Usuário não encontrado' 
-      });
+      return res.status(404).json({ error: 'Usuário não encontrado' });
     }
 
-    // Criar registro do jogo
-    const gameRecord = {
-      id: Date.now().toString(36) + Math.random().toString(36).substr(2),
-      jogo,
-      pontuacao: parseInt(pontuacao),
-      tempo: tempo || null,
-      nivel: nivel || null,
-      dadosExtras: dadosExtras || {},
-      dataJogo: new Date().toISOString(),
-      usuarioId: userId
-    };
+    // Inserir pontuação
+    const extras = dadosExtras ? JSON.stringify(dadosExtras) : null;
+    const result = await query(
+      'INSERT INTO game_scores (user_id, jogo, pontuacao, tempo, nivel, dados_extras) VALUES (?, ?, ?, ?, ?, ?)',
+      [userId, jogo, parseInt(pontuacao), tempo ? parseInt(tempo) : null, nivel || null, extras]
+    );
 
-    // Inicializar gameData se não existir
-    if (!user.gameData) {
-      user.gameData = {
-        pontuacoes: [],
-        estatisticas: {
-          totalJogos: 0,
-          melhorPontuacao: 0,
-          tempoTotal: 0,
-          ultimoJogo: null
-        }
-      };
-    }
+    const insertedId = result.insertId;
 
-    // Adicionar pontuação
-    user.gameData.pontuacoes.push(gameRecord);
+    // Buscar registro inserido
+    const rows = await query('SELECT id, user_id AS userId, jogo, pontuacao, tempo, nivel, dados_extras AS dadosExtras, data_jogo AS dataJogo FROM game_scores WHERE id = ?', [insertedId]);
+    const record = rows[0];
 
-    // Atualizar estatísticas
-    user.gameData.estatisticas.totalJogos += 1;
-    user.gameData.estatisticas.ultimoJogo = new Date().toISOString();
-    
-    if (pontuacao > user.gameData.estatisticas.melhorPontuacao) {
-      user.gameData.estatisticas.melhorPontuacao = pontuacao;
-    }
-
-    if (tempo) {
-      user.gameData.estatisticas.tempoTotal += parseInt(tempo);
-    }
-
-    // Manter apenas as últimas 50 pontuações
-    if (user.gameData.pontuacoes.length > 50) {
-      user.gameData.pontuacoes = user.gameData.pontuacoes.slice(-50);
-    }
-
-    // Salvar no banco
-    const usuarioAtualizado = db.atualizarUsuario(userId, { gameData: user.gameData });
+    // Estatísticas básicas do usuário
+    const [stats] = await query(
+      `SELECT COUNT(*) AS totalJogos, MAX(pontuacao) AS melhorPontuacao, COALESCE(SUM(tempo),0) AS tempoTotal, MAX(data_jogo) AS ultimoJogo
+       FROM game_scores WHERE user_id = ?`,
+      [userId]
+    );
 
     res.json({
       success: true,
       message: 'Pontuação salva com sucesso',
       data: {
-        record: gameRecord,
-        estatisticas: user.gameData.estatisticas
+        record,
+        estatisticas: {
+          totalJogos: stats.totalJogos,
+          melhorPontuacao: stats.melhorPontuacao || 0,
+          tempoTotal: stats.tempoTotal || 0,
+          ultimoJogo: stats.ultimoJogo || null
+        }
       }
     });
 
@@ -94,39 +70,47 @@ exports.salvarPontuacao = async (req, res) => {
 // @access  Private
 exports.obterPontuacoes = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const userId = req.user.id;
     const { jogo, limite = 10 } = req.query;
 
-    // Buscar usuário
-    const user = db.buscarUsuarioPorId(userId);
+    // Verificar usuário
+    const user = await db.buscarUsuarioPorId(userId);
     if (!user) {
-      return res.status(404).json({ 
-        error: 'Usuário não encontrado' 
-      });
+      return res.status(404).json({ error: 'Usuário não encontrado' });
     }
 
-    let pontuacoes = user.gameData?.pontuacoes || [];
+    // Buscar pontuações
+    let rows;
+    const limit = Math.max(1, Math.min(parseInt(limite), 100));
 
-    // Filtrar por jogo se especificado
     if (jogo) {
-      pontuacoes = pontuacoes.filter(p => p.jogo === jogo);
+      rows = await query(
+        'SELECT id, user_id AS userId, jogo, pontuacao, tempo, nivel, dados_extras AS dadosExtras, data_jogo AS dataJogo FROM game_scores WHERE user_id = ? AND jogo = ? ORDER BY pontuacao DESC, data_jogo DESC LIMIT ?',
+        [userId, jogo, limit]
+      );
+    } else {
+      rows = await query(
+        'SELECT id, user_id AS userId, jogo, pontuacao, tempo, nivel, dados_extras AS dadosExtras, data_jogo AS dataJogo FROM game_scores WHERE user_id = ? ORDER BY pontuacao DESC, data_jogo DESC LIMIT ?',
+        [userId, limit]
+      );
     }
 
-    // Ordenar por pontuação (maior primeiro)
-    pontuacoes.sort((a, b) => b.pontuacao - a.pontuacao);
-
-    // Limitar resultados
-    pontuacoes = pontuacoes.slice(0, parseInt(limite));
+    // Estatísticas
+    const [stats] = await query(
+      `SELECT COUNT(*) AS totalJogos, MAX(pontuacao) AS melhorPontuacao, COALESCE(SUM(tempo),0) AS tempoTotal, MAX(data_jogo) AS ultimoJogo
+       FROM game_scores WHERE user_id = ?`,
+      [userId]
+    );
 
     res.json({
       success: true,
       data: {
-        pontuacoes,
-        estatisticas: user.gameData?.estatisticas || {
-          totalJogos: 0,
-          melhorPontuacao: 0,
-          tempoTotal: 0,
-          ultimoJogo: null
+        pontuacoes: rows,
+        estatisticas: {
+          totalJogos: stats.totalJogos,
+          melhorPontuacao: stats.melhorPontuacao || 0,
+          tempoTotal: stats.tempoTotal || 0,
+          ultimoJogo: stats.ultimoJogo || null
         }
       }
     });
@@ -146,38 +130,37 @@ exports.obterPontuacoes = async (req, res) => {
 exports.obterRanking = async (req, res) => {
   try {
     const { jogo, limite = 10 } = req.query;
+    const limit = Math.max(1, Math.min(parseInt(limite), 200));
 
-    // Buscar todos os usuários
-    const usuarios = db.buscarTodosUsuarios();
-    
-    // Coletar todas as pontuações
-    let todasPontuacoes = [];
-    
-    usuarios.forEach(usuario => {
-      if (usuario.gameData?.pontuacoes) {
-        usuario.gameData.pontuacoes.forEach(pontuacao => {
-          if (!jogo || pontuacao.jogo === jogo) {
-            todasPontuacoes.push({
-              ...pontuacao,
-              nomeUsuario: usuario.name,
-              emailUsuario: usuario.email
-            });
-          }
-        });
-      }
-    });
-
-    // Ordenar por pontuação (maior primeiro)
-    todasPontuacoes.sort((a, b) => b.pontuacao - a.pontuacao);
-
-    // Limitar resultados
-    todasPontuacoes = todasPontuacoes.slice(0, parseInt(limite));
+    let rows;
+    if (jogo) {
+      rows = await query(
+        `SELECT gs.id, gs.user_id AS userId, gs.jogo, gs.pontuacao, gs.tempo, gs.nivel, gs.dados_extras AS dadosExtras, gs.data_jogo AS dataJogo,
+                u.name AS nomeUsuario, u.email AS emailUsuario
+         FROM game_scores gs
+         JOIN users u ON u.id = gs.user_id
+         WHERE gs.jogo = ?
+         ORDER BY gs.pontuacao DESC, gs.data_jogo DESC
+         LIMIT ?`,
+        [jogo, limit]
+      );
+    } else {
+      rows = await query(
+        `SELECT gs.id, gs.user_id AS userId, gs.jogo, gs.pontuacao, gs.tempo, gs.nivel, gs.dados_extras AS dadosExtras, gs.data_jogo AS dataJogo,
+                u.name AS nomeUsuario, u.email AS emailUsuario
+         FROM game_scores gs
+         JOIN users u ON u.id = gs.user_id
+         ORDER BY gs.pontuacao DESC, gs.data_jogo DESC
+         LIMIT ?`,
+        [limit]
+      );
+    }
 
     res.json({
       success: true,
       data: {
-        ranking: todasPontuacoes,
-        totalJogadores: usuarios.length,
+        ranking: rows,
+        totalJogadores: undefined,
         jogo: jogo || 'todos'
       }
     });
@@ -196,46 +179,53 @@ exports.obterRanking = async (req, res) => {
 // @access  Private
 exports.obterEstatisticas = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const userId = req.user.id;
 
-    // Buscar usuário
-    const user = db.buscarUsuarioPorId(userId);
+    // Verificar usuário
+    const user = await db.buscarUsuarioPorId(userId);
     if (!user) {
-      return res.status(404).json({ 
-        error: 'Usuário não encontrado' 
-      });
+      return res.status(404).json({ error: 'Usuário não encontrado' });
     }
 
-    const gameData = user.gameData || {
-      pontuacoes: [],
-      estatisticas: {
-        totalJogos: 0,
-        melhorPontuacao: 0,
-        tempoTotal: 0,
-        ultimoJogo: null
-      }
-    };
+    // Estatísticas agregadas
+    const [stats] = await query(
+      `SELECT COUNT(*) AS totalJogos, COALESCE(MAX(pontuacao),0) AS melhorPontuacao, COALESCE(SUM(tempo),0) AS tempoTotal, MAX(data_jogo) AS ultimoJogo
+       FROM game_scores WHERE user_id = ?`,
+      [userId]
+    );
 
-    // Calcular estatísticas adicionais
-    const pontuacoes = gameData.pontuacoes || [];
-    const estatisticas = {
-      ...gameData.estatisticas,
-      pontuacaoMedia: pontuacoes.length > 0 
-        ? Math.round(pontuacoes.reduce((sum, p) => sum + p.pontuacao, 0) / pontuacoes.length)
-        : 0,
-      jogosPorTipo: {}
-    };
+    // Distribuição por tipo de jogo
+    const jogosPorTipo = await query(
+      `SELECT jogo, COUNT(*) AS quantidade
+       FROM game_scores WHERE user_id = ?
+       GROUP BY jogo
+       ORDER BY quantidade DESC`,
+      [userId]
+    );
 
-    // Contar jogos por tipo
-    pontuacoes.forEach(p => {
-      estatisticas.jogosPorTipo[p.jogo] = (estatisticas.jogosPorTipo[p.jogo] || 0) + 1;
-    });
+    // Pontuações recentes
+    const pontuacoesRecentes = await query(
+      `SELECT id, user_id AS userId, jogo, pontuacao, tempo, nivel, dados_extras AS dadosExtras, data_jogo AS dataJogo
+       FROM game_scores WHERE user_id = ?
+       ORDER BY data_jogo DESC
+       LIMIT 5`,
+      [userId]
+    );
 
     res.json({
       success: true,
       data: {
-        estatisticas,
-        pontuacoesRecentes: pontuacoes.slice(-5).reverse()
+        estatisticas: {
+          totalJogos: stats.totalJogos || 0,
+          melhorPontuacao: stats.melhorPontuacao || 0,
+          tempoTotal: stats.tempoTotal || 0,
+          ultimoJogo: stats.ultimoJogo || null,
+          jogosPorTipo: jogosPorTipo.reduce((acc, row) => {
+            acc[row.jogo] = row.quantidade;
+            return acc;
+          }, {})
+        },
+        pontuacoesRecentes
       }
     });
 
@@ -247,4 +237,3 @@ exports.obterEstatisticas = async (req, res) => {
     });
   }
 };
-

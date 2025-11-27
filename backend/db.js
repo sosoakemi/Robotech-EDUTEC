@@ -1,95 +1,73 @@
-const fs = require('fs');
-const path = require('path');
+const { query } = require('./lib/mysql');
+const { randomUUID } = require('crypto');
 
-const DB_FILE = path.join(__dirname, 'database.json');
+// Mapeamento entre o modelo antigo (JSON) e a tabela MySQL
+// Tabela users sugerida:
+// id (VARCHAR(36) PK), name VARCHAR(255), email VARCHAR(255) UNIQUE,
+// password VARCHAR(255), role VARCHAR(50), avatar TEXT NULL,
+// is_active TINYINT(1) DEFAULT 1, created_at DATETIME, last_login DATETIME NULL
 
-// Função para ler o banco de dados
-function lerDB() {
-  try {
-    const data = fs.readFileSync(DB_FILE, 'utf8');
-    return JSON.parse(data);
-  } catch (error) {
-    // Se o arquivo não existir, cria um novo
-    const db = { usuarios: [] };
-    salvarDB(db);
-    return db;
-  }
+async function buscarTodosUsuarios() {
+  const rows = await query('SELECT id, name, email, role, avatar, is_active AS isActive, created_at AS createdAt, last_login AS lastLogin FROM users', []);
+  return rows;
 }
 
-// Função para salvar no banco de dados
-function salvarDB(data) {
-  try {
-    fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), 'utf8');
-    return true;
-  } catch (error) {
-    console.error('Erro ao salvar banco de dados:', error);
-    return false;
-  }
+async function buscarUsuarioPorEmail(email) {
+  const rows = await query('SELECT id, name, email, password, role, avatar, is_active AS isActive, created_at AS createdAt, last_login AS lastLogin FROM users WHERE email = ?', [email.toLowerCase()]);
+  return rows[0] || null;
 }
 
-// Buscar todos os usuários
-function buscarTodosUsuarios() {
-  const db = lerDB();
-  return db.usuarios;
+async function buscarUsuarioPorId(id) {
+  const rows = await query('SELECT id, name, email, password, role, avatar, is_active AS isActive, created_at AS createdAt, last_login AS lastLogin FROM users WHERE id = ?', [id]);
+  return rows[0] || null;
 }
 
-// Buscar usuário por email
-function buscarUsuarioPorEmail(email) {
-  const db = lerDB();
-  return db.usuarios.find(u => u.email === email);
+async function criarUsuario(usuario) {
+  const id = randomUUID();
+  const now = new Date();
+  await query(
+    'INSERT INTO users (id, name, email, password, role, avatar, is_active, created_at, last_login) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+    [id, usuario.name, usuario.email.toLowerCase(), usuario.password, usuario.role || 'student', usuario.avatar || null, 1, now, null]
+  );
+  const inserted = await buscarUsuarioPorId(id);
+  return inserted;
 }
 
-// Buscar usuário por ID
-function buscarUsuarioPorId(id) {
-  const db = lerDB();
-  return db.usuarios.find(u => u._id === id);
+async function atualizarUsuario(id, dadosAtualizados) {
+  const campos = [];
+  const valores = [];
+
+  const mapping = {
+    name: 'name',
+    email: 'email',
+    password: 'password',
+    role: 'role',
+    avatar: 'avatar',
+    isActive: 'is_active',
+    lastLogin: 'last_login'
+  };
+
+  Object.keys(dadosAtualizados).forEach((k) => {
+    if (mapping[k] !== undefined) {
+      campos.push(`${mapping[k]} = ?`);
+      if (k === 'email') valores.push(String(dadosAtualizados[k]).toLowerCase());
+      else valores.push(dadosAtualizados[k]);
+    }
+  });
+
+  if (campos.length === 0) return await buscarUsuarioPorId(id);
+
+  valores.push(id);
+  await query(`UPDATE users SET ${campos.join(', ')} WHERE id = ?`, valores);
+  return await buscarUsuarioPorId(id);
 }
 
-// Criar novo usuário
-function criarUsuario(usuario) {
-  const db = lerDB();
-  
-  // Gerar ID único
-  usuario._id = Date.now().toString() + Math.random().toString(36).substr(2, 9);
-  usuario.createdAt = new Date().toISOString();
-  usuario.isActive = true;
-  usuario.lastLogin = null;
-  
-  db.usuarios.push(usuario);
-  salvarDB(db);
-  
-  return usuario;
-}
-
-// Atualizar usuário
-function atualizarUsuario(id, dadosAtualizados) {
-  const db = lerDB();
-  const index = db.usuarios.findIndex(u => u._id === id);
-  
-  if (index === -1) return null;
-  
-  db.usuarios[index] = { ...db.usuarios[index], ...dadosAtualizados };
-  salvarDB(db);
-  
-  return db.usuarios[index];
-}
-
-// Deletar usuário
-function deletarUsuario(id) {
-  const db = lerDB();
-  const index = db.usuarios.findIndex(u => u._id === id);
-  
-  if (index === -1) return false;
-  
-  db.usuarios.splice(index, 1);
-  salvarDB(db);
-  
-  return true;
+async function deletarUsuario(id) {
+  const res = await query('DELETE FROM users WHERE id = ?', [id]);
+  return res.affectedRows > 0;
 }
 
 module.exports = {
-  lerDB,
-  salvarDB,
   buscarTodosUsuarios,
   buscarUsuarioPorEmail,
   buscarUsuarioPorId,

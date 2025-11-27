@@ -20,8 +20,8 @@ exports.protect = async (req, res, next) => {
     // Verificar token
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret-padrao-mude-isso');
 
-    // Buscar usuário
-    const user = db.buscarUsuarioPorId(decoded.id);
+    // Buscar usuário (MySQL)
+    const user = await db.buscarUsuarioPorId(decoded.id);
 
     if (!user) {
       return res.status(401).json({ 

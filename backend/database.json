@@ -1,0 +1,86 @@
+{
+  "usuarios": [
+    {
+      "id": "404d3e22-6809-4ab4-8c63-7597430c47d1",
+      "nome": "leticia",
+      "email": "let@gmail.com",
+      "senhaHash": "$2a$10$kYFciePHh/0r25r7NfiJB.2SUVaOlLdNNmYdOOWaKfgoCkIU/tD8e",
+      "jogos": [],
+      "criadoEm": "2025-11-08T04:05:50.578Z",
+      "ultimoLogin": "2025-11-08T04:05:56.433Z"
+    },
+    {
+      "id": "0b15570e-1172-46e0-8f32-156f7d5cc110",
+      "nome": "lat",
+      "email": "lat@gmail.com",
+      "senhaHash": "$2a$10$UYtlchpsk6JoQexs1qQxAeB2zD.6bHok1IoDYkK26lQXElv81NjPm",
+      "jogos": [],
+      "criadoEm": "2025-11-15T20:44:23.638Z"
+    },
+    {
+      "id": "1e256bcd-7747-478f-9244-19e15aff4cf2",
+      "nome": "sophiaaa",
+      "email": "sophiaaa@gmail.com",
+      "senhaHash": "$2a$10$JbzLUFcuVU0LBUIuo/2gKOgWpB3EN8TI3PMfq0OxWjpYSZsdbMqg.",
+      "jogos": [],
+      "criadoEm": "2025-11-15T20:44:51.541Z",
+      "ultimoLogin": "2025-11-15T20:45:15.633Z"
+    },
+    {
+      "id": "ad417455-9f4d-41f9-b5f0-fc38e9cd0f7b",
+      "nome": "larissa",
+      "email": "larissa@gmail.com",
+      "senhaHash": "$2a$10$PbWXydcN1T881/87aAI55Oy5M2hyRPwNKc78XL0RRamnFXY8pW8em",
+      "jogos": [],
+      "criadoEm": "2025-11-15T21:01:53.494Z",
+      "ultimoLogin": "2025-11-15T21:02:03.215Z"
+    },
+    {
+      "id": "c88fef2f-92ce-425e-82f6-b943fd568d7c",
+      "nome": "sophia",
+      "email": "sophiaa@gmail.com",
+      "senhaHash": "$2a$10$XrXhP7AlO50Oohp0gNSZ0Owtcva/qj7Hi2EaHh5aGFR.GLNnnKCi.",
+      "jogos": [],
+      "criadoEm": "2025-11-15T21:25:19.817Z",
+      "ultimoLogin": "2025-11-15T21:25:27.343Z"
+    },
+    {
+      "id": "61b57f62-1f3f-4983-b261-5431ac643074",
+      "nome": "lara",
+      "email": "lara@gmail.com",
+      "senhaHash": "$2a$10$a281NdpjFzCrA1qzQuM24u2hWTn7SmT1Rn9bPz21ZzxDK3kT8roDe",
+      "jogos": [
+        {
+          "id": "8f37b70a-8c8e-4816-a0a6-3897e01b04e1",
+          "jogo": "coderobotech",
+          "pontuacao": 500,
+          "tempo": null,
+          "nivel": 5,
+          "observacoes": "Completou 5 níveis",
+          "registradoEm": "2025-11-15T23:39:51.050Z"
+        }
+      ],
+      "criadoEm": "2025-11-15T23:36:49.229Z",
+      "ultimoLogin": "2025-11-15T23:37:07.939Z"
+    },
+    {
+      "id": "8ca05abf-0d01-481c-b436-42898035a86a",
+      "nome": "luiz henrique",
+      "email": "luiz@gmail.com",
+      "senhaHash": "$2a$10$Z/jdTND3ERFPcF3SOV5ibebqQxfz8rZXh500OxBuhouOtiCh9cHXm",
+      "jogos": [
+        {
+          "id": "bd57c169-33cc-4d92-913b-de2f56ea3687",
+          "jogo": "coderobotech",
+          "pontuacao": 500,
+          "tempo": null,
+          "nivel": 5,
+          "observacoes": "Completou 5 níveis",
+          "registradoEm": "2025-11-26T21:51:27.040Z"
+        }
+      ],
+      "criadoEm": "2025-11-26T17:13:12.414Z",
+      "ultimoLogin": "2025-11-26T22:22:49.534Z"
+    }
+  ]
+}

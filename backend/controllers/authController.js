@@ -16,8 +16,12 @@ exports.register = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
 
+    if (!name || !email || !password) {
+      return res.status(400).json({ error: 'Nome, email e senha são obrigatórios' });
+    }
+
     // Verificar se usuário já existe
-    const userExists = db.buscarUsuarioPorEmail(email);
+    const userExists = await db.buscarUsuarioPorEmail(email);
 
     if (userExists) {
       return res.status(400).json({ 
@@ -38,7 +42,7 @@ exports.register = async (req, res) => {
       avatar: null
     };
 
-    const novoUsuario = db.criarUsuario(usuario);
+    const novoUsuario = await db.criarUsuario(usuario);
 
     // Retornar sem a senha
     const { password: _, ...usuarioSemSenha } = novoUsuario;
@@ -47,7 +51,7 @@ exports.register = async (req, res) => {
       success: true,
       data: {
         ...usuarioSemSenha,
-        token: generateToken(novoUsuario._id)
+        token: generateToken(novoUsuario.id)
       }
     });
   } catch (error) {
@@ -74,7 +78,7 @@ exports.login = async (req, res) => {
     }
 
     // Buscar usuário
-    const user = db.buscarUsuarioPorEmail(email);
+    const user = await db.buscarUsuarioPorEmail(email);
 
     if (!user) {
       return res.status(401).json({ 
@@ -99,8 +103,11 @@ exports.login = async (req, res) => {
     }
 
     // Atualizar último login
-    user.lastLogin = new Date().toISOString();
-    db.atualizarUsuario(user._id, { lastLogin: user.lastLogin });
+    const lastLogin = new Date().toISOString();
+    await db.atualizarUsuario(user.id, { lastLogin });
+
+    // Refletir no objeto de resposta
+    user.lastLogin = lastLogin;
 
     // Retornar dados e token (sem senha)
     const { password: _, ...usuarioSemSenha } = user;
@@ -109,7 +116,7 @@ exports.login = async (req, res) => {
       success: true,
       data: {
         ...usuarioSemSenha,
-        token: generateToken(user._id)
+        token: generateToken(user.id)
       }
     });
   } catch (error) {
@@ -126,7 +133,7 @@ exports.login = async (req, res) => {
 // @access  Private
 exports.getMe = async (req, res) => {
   try {
-    const user = db.buscarUsuarioPorId(req.user._id);
+    const user = await db.buscarUsuarioPorId(req.user.id);
 
     if (!user) {
       return res.status(404).json({ 
@@ -167,7 +174,7 @@ exports.atualizarPerfil = async (req, res) => {
     const { name, email, avatar } = req.body;
 
     // Buscar usuário
-    const user = db.buscarUsuarioPorId(req.user._id);
+    const user = await db.buscarUsuarioPorId(req.user.id);
 
     if (!user) {
       return res.status(404).json({ 
@@ -177,7 +184,7 @@ exports.atualizarPerfil = async (req, res) => {
 
     // Verificar se o email já está em uso por outro usuário
     if (email && email !== user.email) {
-      const emailExists = db.buscarUsuarioPorEmail(email);
+      const emailExists = await db.buscarUsuarioPorEmail(email);
       if (emailExists) {
         return res.status(400).json({ 
           error: 'Este email já está em uso' 
@@ -191,7 +198,7 @@ exports.atualizarPerfil = async (req, res) => {
     if (email) dadosAtualizados.email = email;
     if (avatar !== undefined) dadosAtualizados.avatar = avatar;
 
-    const usuarioAtualizado = db.atualizarUsuario(user._id, dadosAtualizados);
+    const usuarioAtualizado = await db.atualizarUsuario(user.id, dadosAtualizados);
 
     // Retornar sem senha
     const { password: _, ...usuarioSemSenha } = usuarioAtualizado;
@@ -231,7 +238,7 @@ exports.alterarSenha = async (req, res) => {
     }
 
     // Buscar usuário
-    const user = db.buscarUsuarioPorId(req.user._id);
+    const user = await db.buscarUsuarioPorId(req.user.id);
 
     if (!user) {
       return res.status(404).json({ 
@@ -253,7 +260,7 @@ exports.alterarSenha = async (req, res) => {
     const hashedPassword = await bcrypt.hash(novaSenha, salt);
 
     // Atualizar senha
-    db.atualizarUsuario(user._id, { password: hashedPassword });
+    await db.atualizarUsuario(user.id, { password: hashedPassword });
 
     res.json({
       success: true,
@@ -283,7 +290,7 @@ exports.deletarConta = async (req, res) => {
     }
 
     // Buscar usuário
-    const user = db.buscarUsuarioPorId(req.user._id);
+    const user = await db.buscarUsuarioPorId(req.user.id);
 
     if (!user) {
       return res.status(404).json({ 
@@ -302,7 +309,7 @@ exports.deletarConta = async (req, res) => {
     }
 
     // Deletar usuário
-    db.deletarUsuario(user._id);
+    await db.deletarUsuario(user.id);
 
     res.json({
       success: true,
