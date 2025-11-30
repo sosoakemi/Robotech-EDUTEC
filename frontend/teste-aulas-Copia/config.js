@@ -2,7 +2,7 @@
 const CONFIG = {
     // URLs da API
     API_URLS: {
-        development: 'http://localhost:5001/chat',
+        development: 'https://backend-edutec-pi.vercel.app/chat',
         production: '/chat'
     },
     

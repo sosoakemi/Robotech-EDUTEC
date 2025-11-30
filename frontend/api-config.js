@@ -2,7 +2,7 @@
 (function() {
   'use strict';
 
-  const DEFAULT_DEV_API_URL = 'http://localhost:5001';
+  const DEFAULT_DEV_API_URL = 'https://backend-edutec-pi.vercel.app';
   const DEFAULT_PROD_API_URL = '';
 
   function isProduction() {
