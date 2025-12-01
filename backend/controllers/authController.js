@@ -14,6 +14,9 @@ const generateToken = (id) => {
 // @access  Public
 exports.register = async (req, res) => {
   try {
+    console.log('--- INÍCIO REGISTER ---');
+    console.log('Body recebido:', req.body);
+
     const { name, email, password, role } = req.body;
 
     if (!name || !email || !password) {
@@ -21,10 +24,12 @@ exports.register = async (req, res) => {
     }
 
     // Verificar se usuário já existe
+    console.log('Verificando se email existe:', email);
     const userExists = await db.buscarUsuarioPorEmail(email);
 
     if (userExists) {
-      return res.status(400).json({ 
+      console.log('Usuário já existe no banco.');
+      return res.status(409).json({ // Mudei para 409 (Conflict)
         error: 'Usuário já cadastrado com este email' 
       });
     }
@@ -42,7 +47,13 @@ exports.register = async (req, res) => {
       avatar: null
     };
 
+    console.log('Chamando db.criarUsuario...');
     const novoUsuario = await db.criarUsuario(usuario);
+    console.log('Retorno de db.criarUsuario:', novoUsuario);
+
+    if (!novoUsuario) {
+        throw new Error('Falha crítica: db.criarUsuario retornou nulo');
+    }
 
     // Retornar sem a senha
     const { password: _, ...usuarioSemSenha } = novoUsuario;
@@ -55,7 +66,7 @@ exports.register = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Erro no registro:', error);
+    console.error('ERRO FATAL NO REGISTRO:', error);
     res.status(500).json({ 
       error: 'Erro ao registrar usuário',
       message: error.message 
@@ -70,44 +81,26 @@ exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Validar dados
     if (!email || !password) {
-      return res.status(400).json({ 
-        error: 'Email e senha são obrigatórios' 
-      });
+      return res.status(400).json({ error: 'Email e senha são obrigatórios' });
     }
 
     // Buscar usuário
     const user = await db.buscarUsuarioPorEmail(email);
 
     if (!user) {
-      return res.status(401).json({ 
-        error: 'Credenciais inválidas' 
-      });
+      return res.status(401).json({ error: 'Credenciais inválidas' });
     }
 
     // Verificar senha
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
-      return res.status(401).json({ 
-        error: 'Credenciais inválidas' 
-      });
+      return res.status(401).json({ error: 'Credenciais inválidas' });
     }
 
-    // Verificar se conta está ativa
-    if (!user.isActive) {
-      return res.status(401).json({ 
-        error: 'Conta desativada' 
-      });
-    }
-
-    // Atualizar último login
-    const lastLogin = new Date().toISOString();
-    await db.atualizarUsuario(user.id, { lastLogin });
-
-    // Refletir no objeto de resposta
-    user.lastLogin = lastLogin;
+    // REMOVIDO: Verificação de isActive (coluna não existe no banco)
+    // REMOVIDO: Atualização de lastLogin (coluna não existe no banco)
 
     // Retornar dados e token (sem senha)
     const { password: _, ...usuarioSemSenha } = user;
@@ -136,12 +129,9 @@ exports.getMe = async (req, res) => {
     const user = await db.buscarUsuarioPorId(req.user.id);
 
     if (!user) {
-      return res.status(404).json({ 
-        error: 'Usuário não encontrado' 
-      });
+      return res.status(404).json({ error: 'Usuário não encontrado' });
     }
 
-    // Retornar sem senha
     const { password: _, ...usuarioSemSenha } = user;
 
     res.json({
@@ -150,176 +140,86 @@ exports.getMe = async (req, res) => {
     });
   } catch (error) {
     console.error('Erro ao buscar usuário:', error);
-    res.status(500).json({ 
-      error: 'Erro ao buscar dados do usuário' 
-    });
+    res.status(500).json({ error: 'Erro ao buscar dados do usuário' });
   }
 };
 
-// @desc    Logout (apenas para limpar no frontend)
-// @route   POST /api/auth/logout
-// @access  Private
+// @desc    Logout
 exports.logout = async (req, res) => {
-  res.json({
-    success: true,
-    message: 'Logout realizado com sucesso'
-  });
+  res.json({ success: true, message: 'Logout realizado com sucesso' });
 };
 
-// @desc    Atualizar perfil do usuário
-// @route   PUT /api/auth/perfil
-// @access  Private
+// @desc    Atualizar perfil
 exports.atualizarPerfil = async (req, res) => {
   try {
-    const { name, email, avatar } = req.body;
-
-    // Buscar usuário
+    const { name, email } = req.body; // Removi avatar se não tiver coluna
     const user = await db.buscarUsuarioPorId(req.user.id);
 
-    if (!user) {
-      return res.status(404).json({ 
-        error: 'Usuário não encontrado' 
-      });
-    }
+    if (!user) return res.status(404).json({ error: 'Usuário não encontrado' });
 
-    // Verificar se o email já está em uso por outro usuário
     if (email && email !== user.email) {
       const emailExists = await db.buscarUsuarioPorEmail(email);
-      if (emailExists) {
-        return res.status(400).json({ 
-          error: 'Este email já está em uso' 
-        });
-      }
+      if (emailExists) return res.status(400).json({ error: 'Este email já está em uso' });
     }
 
-    // Atualizar campos
     const dadosAtualizados = {};
     if (name) dadosAtualizados.name = name;
     if (email) dadosAtualizados.email = email;
-    if (avatar !== undefined) dadosAtualizados.avatar = avatar;
 
     const usuarioAtualizado = await db.atualizarUsuario(user.id, dadosAtualizados);
-
-    // Retornar sem senha
     const { password: _, ...usuarioSemSenha } = usuarioAtualizado;
 
-    res.json({
-      success: true,
-      message: 'Perfil atualizado com sucesso',
-      data: usuarioSemSenha
-    });
+    res.json({ success: true, message: 'Perfil atualizado', data: usuarioSemSenha });
   } catch (error) {
     console.error('Erro ao atualizar perfil:', error);
-    res.status(500).json({ 
-      error: 'Erro ao atualizar perfil',
-      message: error.message 
-    });
+    res.status(500).json({ error: 'Erro ao atualizar perfil' });
   }
 };
 
-// @desc    Alterar senha do usuário
-// @route   PUT /api/auth/senha
-// @access  Private
+// @desc    Alterar senha
 exports.alterarSenha = async (req, res) => {
   try {
     const { senhaAtual, novaSenha } = req.body;
+    if (!senhaAtual || !novaSenha) return res.status(400).json({ error: 'Dados incompletos' });
+    if (novaSenha.length < 6) return res.status(400).json({ error: 'Senha muito curta' });
 
-    // Validar dados
-    if (!senhaAtual || !novaSenha) {
-      return res.status(400).json({ 
-        error: 'Senha atual e nova senha são obrigatórias' 
-      });
-    }
-
-    if (novaSenha.length < 6) {
-      return res.status(400).json({ 
-        error: 'A nova senha deve ter no mínimo 6 caracteres' 
-      });
-    }
-
-    // Buscar usuário
     const user = await db.buscarUsuarioPorId(req.user.id);
+    if (!user) return res.status(404).json({ error: 'Usuário não encontrado' });
 
-    if (!user) {
-      return res.status(404).json({ 
-        error: 'Usuário não encontrado' 
-      });
-    }
-
-    // Verificar senha atual
     const isMatch = await bcrypt.compare(senhaAtual, user.password);
+    if (!isMatch) return res.status(401).json({ error: 'Senha atual incorreta' });
 
-    if (!isMatch) {
-      return res.status(401).json({ 
-        error: 'Senha atual incorreta' 
-      });
-    }
-
-    // Hash da nova senha
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(novaSenha, salt);
 
-    // Atualizar senha
     await db.atualizarUsuario(user.id, { password: hashedPassword });
 
-    res.json({
-      success: true,
-      message: 'Senha alterada com sucesso'
-    });
+    res.json({ success: true, message: 'Senha alterada com sucesso' });
   } catch (error) {
     console.error('Erro ao alterar senha:', error);
-    res.status(500).json({ 
-      error: 'Erro ao alterar senha',
-      message: error.message 
-    });
+    res.status(500).json({ error: 'Erro ao alterar senha' });
   }
 };
 
-// @desc    Deletar conta do usuário
-// @route   DELETE /api/auth/conta
-// @access  Private
+// @desc    Deletar conta
 exports.deletarConta = async (req, res) => {
   try {
     const { senha, confirmacao } = req.body;
+    if (confirmacao !== 'DELETAR') return res.status(400).json({ error: 'Confirmação incorreta' });
 
-    // Validar confirmação
-    if (confirmacao !== 'DELETAR') {
-      return res.status(400).json({ 
-        error: 'Digite DELETAR para confirmar a exclusão da conta' 
-      });
-    }
-
-    // Buscar usuário
     const user = await db.buscarUsuarioPorId(req.user.id);
+    if (!user) return res.status(404).json({ error: 'Usuário não encontrado' });
 
-    if (!user) {
-      return res.status(404).json({ 
-        error: 'Usuário não encontrado' 
-      });
-    }
-
-    // Verificar senha se fornecida
     if (senha) {
       const isMatch = await bcrypt.compare(senha, user.password);
-      if (!isMatch) {
-        return res.status(401).json({ 
-          error: 'Senha incorreta' 
-        });
-      }
+      if (!isMatch) return res.status(401).json({ error: 'Senha incorreta' });
     }
 
-    // Deletar usuário
     await db.deletarUsuario(user.id);
 
-    res.json({
-      success: true,
-      message: 'Conta deletada com sucesso'
-    });
+    res.json({ success: true, message: 'Conta deletada com sucesso' });
   } catch (error) {
     console.error('Erro ao deletar conta:', error);
-    res.status(500).json({ 
-      error: 'Erro ao deletar conta',
-      message: error.message 
-    });
+    res.status(500).json({ error: 'Erro ao deletar conta' });
   }
 };

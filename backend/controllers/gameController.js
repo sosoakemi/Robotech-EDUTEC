@@ -1,5 +1,6 @@
 const db = require('../db');
-const { query } = require('../lib/mysql');
+// CORREÇÃO 1: Aponta para o arquivo certo
+const { query } = require('../lib/database'); 
 
 // @desc    Salvar pontuação do jogo
 // @route   POST /api/game/score
@@ -9,11 +10,12 @@ exports.salvarPontuacao = async (req, res) => {
     const { jogo, pontuacao, tempo, nivel, dadosExtras } = req.body;
     const userId = req.user.id;
 
-    // Validar dados
-    if (!jogo || pontuacao === undefined) {
-      return res.status(400).json({ 
-        error: 'Jogo e pontuação são obrigatórios' 
-      });
+    console.log('--- SALVANDO PONTUAÇÃO ---');
+    console.log('User ID:', userId);
+    console.log('Pontos:', pontuacao);
+
+    if (pontuacao === undefined) {
+      return res.status(400).json({ error: 'Pontuação é obrigatória' });
     }
 
     // Verificar usuário
@@ -22,23 +24,25 @@ exports.salvarPontuacao = async (req, res) => {
       return res.status(404).json({ error: 'Usuário não encontrado' });
     }
 
-    // Inserir pontuação
-    const extras = dadosExtras ? JSON.stringify(dadosExtras) : null;
+    // CORREÇÃO 2: Usar a tabela e colunas REAIS do banco (robotech_pontuacoes)
+    // Nota: A tabela não tem coluna 'jogo', 'tempo' ou 'nivel', então salvamos só os pontos.
+    const now = new Date();
+    
     const result = await query(
-      'INSERT INTO game_scores (user_id, jogo, pontuacao, tempo, nivel, dados_extras) VALUES (?, ?, ?, ?, ?, ?)',
-      [userId, jogo, parseInt(pontuacao), tempo ? parseInt(tempo) : null, nivel || null, extras]
+      'INSERT INTO robotech_pontuacoes (usuario_id, pontos, data_partida) VALUES (?, ?, ?)',
+      [userId, parseInt(pontuacao), now]
     );
 
     const insertedId = result.insertId;
 
-    // Buscar registro inserido
-    const rows = await query('SELECT id, user_id AS userId, jogo, pontuacao, tempo, nivel, dados_extras AS dadosExtras, data_jogo AS dataJogo FROM game_scores WHERE id = ?', [insertedId]);
-    const record = rows[0];
-
-    // Estatísticas básicas do usuário
+    // Estatísticas básicas (Adaptado para a tabela real)
     const [stats] = await query(
-      `SELECT COUNT(*) AS totalJogos, MAX(pontuacao) AS melhorPontuacao, COALESCE(SUM(tempo),0) AS tempoTotal, MAX(data_jogo) AS ultimoJogo
-       FROM game_scores WHERE user_id = ?`,
+      `SELECT 
+        COUNT(*) AS totalJogos, 
+        MAX(pontos) AS melhorPontuacao, 
+        MAX(data_partida) AS ultimoJogo
+       FROM robotech_pontuacoes 
+       WHERE usuario_id = ?`,
       [userId]
     );
 
@@ -46,11 +50,10 @@ exports.salvarPontuacao = async (req, res) => {
       success: true,
       message: 'Pontuação salva com sucesso',
       data: {
-        record,
+        record: { id: insertedId, pontos: pontuacao },
         estatisticas: {
           totalJogos: stats.totalJogos,
           melhorPontuacao: stats.melhorPontuacao || 0,
-          tempoTotal: stats.tempoTotal || 0,
           ultimoJogo: stats.ultimoJogo || null
         }
       }
@@ -71,56 +74,34 @@ exports.salvarPontuacao = async (req, res) => {
 exports.obterPontuacoes = async (req, res) => {
   try {
     const userId = req.user.id;
-    const { jogo, limite = 10 } = req.query;
+    const { limite = 10 } = req.query;
 
-    // Verificar usuário
-    const user = await db.buscarUsuarioPorId(userId);
-    if (!user) {
-      return res.status(404).json({ error: 'Usuário não encontrado' });
-    }
-
-    // Buscar pontuações
-    let rows;
     const limit = Math.max(1, Math.min(parseInt(limite), 100));
 
-    if (jogo) {
-      rows = await query(
-        'SELECT id, user_id AS userId, jogo, pontuacao, tempo, nivel, dados_extras AS dadosExtras, data_jogo AS dataJogo FROM game_scores WHERE user_id = ? AND jogo = ? ORDER BY pontuacao DESC, data_jogo DESC LIMIT ?',
-        [userId, jogo, limit]
-      );
-    } else {
-      rows = await query(
-        'SELECT id, user_id AS userId, jogo, pontuacao, tempo, nivel, dados_extras AS dadosExtras, data_jogo AS dataJogo FROM game_scores WHERE user_id = ? ORDER BY pontuacao DESC, data_jogo DESC LIMIT ?',
-        [userId, limit]
-      );
-    }
-
-    // Estatísticas
-    const [stats] = await query(
-      `SELECT COUNT(*) AS totalJogos, MAX(pontuacao) AS melhorPontuacao, COALESCE(SUM(tempo),0) AS tempoTotal, MAX(data_jogo) AS ultimoJogo
-       FROM game_scores WHERE user_id = ?`,
-      [userId]
+    // CORREÇÃO 3: Select na tabela certa
+    const rows = await query(
+      `SELECT 
+        id, 
+        usuario_id AS userId, 
+        pontos AS pontuacao, 
+        data_partida AS dataJogo 
+       FROM robotech_pontuacoes 
+       WHERE usuario_id = ? 
+       ORDER BY pontos DESC, data_partida DESC 
+       LIMIT ?`,
+      [userId, limit]
     );
 
     res.json({
       success: true,
       data: {
-        pontuacoes: rows,
-        estatisticas: {
-          totalJogos: stats.totalJogos,
-          melhorPontuacao: stats.melhorPontuacao || 0,
-          tempoTotal: stats.tempoTotal || 0,
-          ultimoJogo: stats.ultimoJogo || null
-        }
+        pontuacoes: rows
       }
     });
 
   } catch (error) {
     console.error('Erro ao obter pontuações:', error);
-    res.status(500).json({ 
-      error: 'Erro ao obter pontuações',
-      message: error.message 
-    });
+    res.status(500).json({ error: 'Erro ao obter pontuações' });
   }
 };
 
@@ -129,48 +110,34 @@ exports.obterPontuacoes = async (req, res) => {
 // @access  Public
 exports.obterRanking = async (req, res) => {
   try {
-    const { jogo, limite = 10 } = req.query;
+    const { limite = 10 } = req.query;
     const limit = Math.max(1, Math.min(parseInt(limite), 200));
 
-    let rows;
-    if (jogo) {
-      rows = await query(
-        `SELECT gs.id, gs.user_id AS userId, gs.jogo, gs.pontuacao, gs.tempo, gs.nivel, gs.dados_extras AS dadosExtras, gs.data_jogo AS dataJogo,
-                u.name AS nomeUsuario, u.email AS emailUsuario
-         FROM game_scores gs
-         JOIN users u ON u.id = gs.user_id
-         WHERE gs.jogo = ?
-         ORDER BY gs.pontuacao DESC, gs.data_jogo DESC
-         LIMIT ?`,
-        [jogo, limit]
-      );
-    } else {
-      rows = await query(
-        `SELECT gs.id, gs.user_id AS userId, gs.jogo, gs.pontuacao, gs.tempo, gs.nivel, gs.dados_extras AS dadosExtras, gs.data_jogo AS dataJogo,
-                u.name AS nomeUsuario, u.email AS emailUsuario
-         FROM game_scores gs
-         JOIN users u ON u.id = gs.user_id
-         ORDER BY gs.pontuacao DESC, gs.data_jogo DESC
-         LIMIT ?`,
-        [limit]
-      );
-    }
+    // CORREÇÃO 4: Join entre robotech_pontuacoes e robotech_usuarios
+    const rows = await query(
+      `SELECT 
+        p.id, 
+        p.pontos AS pontuacao, 
+        p.data_partida AS dataJogo,
+        u.nome AS nomeUsuario, 
+        u.email AS emailUsuario
+       FROM robotech_pontuacoes p
+       JOIN robotech_usuarios u ON u.id = p.usuario_id
+       ORDER BY p.pontos DESC
+       LIMIT ?`,
+      [limit]
+    );
 
     res.json({
       success: true,
       data: {
-        ranking: rows,
-        totalJogadores: undefined,
-        jogo: jogo || 'todos'
+        ranking: rows
       }
     });
 
   } catch (error) {
     console.error('Erro ao obter ranking:', error);
-    res.status(500).json({ 
-      error: 'Erro ao obter ranking',
-      message: error.message 
-    });
+    res.status(500).json({ error: 'Erro ao obter ranking' });
   }
 };
 
@@ -181,34 +148,14 @@ exports.obterEstatisticas = async (req, res) => {
   try {
     const userId = req.user.id;
 
-    // Verificar usuário
-    const user = await db.buscarUsuarioPorId(userId);
-    if (!user) {
-      return res.status(404).json({ error: 'Usuário não encontrado' });
-    }
-
     // Estatísticas agregadas
     const [stats] = await query(
-      `SELECT COUNT(*) AS totalJogos, COALESCE(MAX(pontuacao),0) AS melhorPontuacao, COALESCE(SUM(tempo),0) AS tempoTotal, MAX(data_jogo) AS ultimoJogo
-       FROM game_scores WHERE user_id = ?`,
-      [userId]
-    );
-
-    // Distribuição por tipo de jogo
-    const jogosPorTipo = await query(
-      `SELECT jogo, COUNT(*) AS quantidade
-       FROM game_scores WHERE user_id = ?
-       GROUP BY jogo
-       ORDER BY quantidade DESC`,
-      [userId]
-    );
-
-    // Pontuações recentes
-    const pontuacoesRecentes = await query(
-      `SELECT id, user_id AS userId, jogo, pontuacao, tempo, nivel, dados_extras AS dadosExtras, data_jogo AS dataJogo
-       FROM game_scores WHERE user_id = ?
-       ORDER BY data_jogo DESC
-       LIMIT 5`,
+      `SELECT 
+        COUNT(*) AS totalJogos, 
+        COALESCE(MAX(pontos),0) AS melhorPontuacao, 
+        MAX(data_partida) AS ultimoJogo
+       FROM robotech_pontuacoes 
+       WHERE usuario_id = ?`,
       [userId]
     );
 
@@ -218,22 +165,13 @@ exports.obterEstatisticas = async (req, res) => {
         estatisticas: {
           totalJogos: stats.totalJogos || 0,
           melhorPontuacao: stats.melhorPontuacao || 0,
-          tempoTotal: stats.tempoTotal || 0,
-          ultimoJogo: stats.ultimoJogo || null,
-          jogosPorTipo: jogosPorTipo.reduce((acc, row) => {
-            acc[row.jogo] = row.quantidade;
-            return acc;
-          }, {})
-        },
-        pontuacoesRecentes
+          ultimoJogo: stats.ultimoJogo || null
+        }
       }
     });
 
   } catch (error) {
     console.error('Erro ao obter estatísticas:', error);
-    res.status(500).json({ 
-      error: 'Erro ao obter estatísticas',
-      message: error.message 
-    });
+    res.status(500).json({ error: 'Erro ao obter estatísticas' });
   }
 };
