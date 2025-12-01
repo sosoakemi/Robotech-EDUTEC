@@ -1,28 +1,19 @@
 const { query } = require('./lib/database');
-const { randomUUID } = require('crypto'); // Se o ID for INT no banco, não vamos usar isso.
 
-async function buscarTodosUsuarios() {
-  const rows = await query(`
-    SELECT 
-      id, 
-      nome as name, 
-      email, 
-      'student' as role, 
-      null as avatar 
-    FROM robotech_usuarios
-  `);
-  return rows;
-}
+// ==========================================
+// PARTE 1: USUÁRIOS (Tabela: robotech_usuarios)
+// ==========================================
 
 async function buscarUsuarioPorEmail(email) {
+  // Traduz as colunas do banco (português) para o código (inglês)
   const rows = await query(`
     SELECT 
       id, 
       nome as name, 
       email, 
       senha as password, 
-      'student' as role, 
-      null as avatar 
+      'student' as role,
+      criado_em as createdAt
     FROM robotech_usuarios 
     WHERE email = ?
   `, [email.toLowerCase()]);
@@ -36,9 +27,7 @@ async function buscarUsuarioPorId(id) {
       id, 
       nome as name, 
       email, 
-      senha as password, 
-      'student' as role, 
-      null as avatar 
+      'student' as role 
     FROM robotech_usuarios 
     WHERE id = ?
   `, [id]);
@@ -49,58 +38,74 @@ async function buscarUsuarioPorId(id) {
 async function criarUsuario(usuario) {
   const now = new Date();
   
-  // MySQL: Usamos 'INSERT' normal. O ID é gerado automaticamente (Auto Increment)
+  // AVISO: A coluna senha deve ser VARCHAR(255) para caber o hash
   const result = await query(
     `INSERT INTO robotech_usuarios (nome, email, senha, criado_em) VALUES (?, ?, ?, ?)`,
     [usuario.name, usuario.email.toLowerCase(), usuario.password, now]
   );
   
-  // No MySQL, pegamos o ID gerado assim:
+  // Pega o ID que o banco acabou de criar (Auto Increment)
   const novoId = result.insertId;
   
   return await buscarUsuarioPorId(novoId);
 }
 
-async function atualizarUsuario(id, dadosAtualizados) {
-  const campos = [];
-  const valores = [];
+// ==========================================
+// PARTE 2: PONTUAÇÃO (Tabela: robotech_pontuacoes)
+// ==========================================
 
-  // Mapeamento Javascript -> MySQL (Português)
-  if (dadosAtualizados.name) {
-    campos.push('nome = ?');
-    valores.push(dadosAtualizados.name);
-  }
-  if (dadosAtualizados.email) {
-    campos.push('email = ?');
-    valores.push(dadosAtualizados.email.toLowerCase());
-  }
-  if (dadosAtualizados.password) {
-    campos.push('senha = ?');
-    valores.push(dadosAtualizados.password);
-  }
+async function salvarPontuacao(usuarioId, pontos) {
+  const now = new Date();
 
-  if (campos.length === 0) return await buscarUsuarioPorId(id);
-
-  valores.push(id);
-  
-  await query(
-    `UPDATE robotech_usuarios SET ${campos.join(', ')} WHERE id = ?`, 
-    valores
+  // Corrigido para usar 'data_partida' conforme sua imagem
+  const result = await query(
+    `INSERT INTO robotech_pontuacoes (usuario_id, pontos, data_partida) VALUES (?, ?, ?)`,
+    [usuarioId, pontos, now]
   );
+
+  return result.insertId;
+}
+
+async function buscarRanking() {
+  // Busca o Top 10 maiores pontuações
+  // Faz o JOIN para pegar o nome do usuário na outra tabela
+  const rows = await query(`
+    SELECT 
+      u.nome, 
+      p.pontos, 
+      p.data_partida
+    FROM robotech_pontuacoes p
+    JOIN robotech_usuarios u ON p.usuario_id = u.id
+    ORDER BY p.pontos DESC
+    LIMIT 10
+  `);
   
-  return await buscarUsuarioPorId(id);
+  return rows;
+}
+
+// Funções extras para manter compatibilidade com seu controller antigo
+async function buscarTodosUsuarios() {
+  const rows = await query("SELECT id, nome as name, email FROM robotech_usuarios");
+  return rows;
 }
 
 async function deletarUsuario(id) {
+  // Cuidado: Se tiver pontuação, o banco pode bloquear deletar por causa da Chave Estrangeira (FK)
+  // O ideal seria deletar as pontuações antes, mas aqui tentamos deletar o usuário direto
   const result = await query('DELETE FROM robotech_usuarios WHERE id = ?', [id]);
   return result.affectedRows > 0;
 }
 
+// ==========================================
+// EXPORTAR TUDO
+// ==========================================
+
 module.exports = {
-  buscarTodosUsuarios,
   buscarUsuarioPorEmail,
   buscarUsuarioPorId,
+  buscarTodosUsuarios,
   criarUsuario,
-  atualizarUsuario,
-  deletarUsuario
-}
+  deletarUsuario,
+  salvarPontuacao, 
+  buscarRanking    
+};
