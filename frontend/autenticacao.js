@@ -204,10 +204,13 @@ if (formCadastro) {
   });
 }
 
+// ----------------------------------------------------
+// ESQUECI A SENHA (Agora funcional)
+// ----------------------------------------------------
 if (formEsqueci) {
   formEsqueci.addEventListener('submit', async (evento) => {
     evento.preventDefault();
-    
+
     const email = document.getElementById('esqueciEmail').value.trim();
     const novaSenha = document.getElementById('esqueciNovaSenha').value.trim();
     const confirmacao = document.getElementById('esqueciConfirmacao').value.trim();
@@ -215,20 +218,60 @@ if (formEsqueci) {
 
     limparMensagem(mensagemEsqueci);
 
+    // Validação no Frontend
     if (novaSenha !== confirmacao) {
-      mostrarMensagem(mensagemEsqueci, 'As senhas digitadas não coincidem.', 'erro');
+      mostrarMensagem(mensagemEsqueci, 'As senhas não coincidem.', 'erro');
+      return;
+    }
+
+    if (novaSenha.length < 6) {
+      mostrarMensagem(mensagemEsqueci, 'A senha deve ter no mínimo 6 caracteres.', 'erro');
       return;
     }
 
     botao.disabled = true;
     botao.innerHTML = '<i class="ri-loader-4-line ri-spin"></i> Atualizando...';
-    
-    // Simulando delay pois não temos a rota ainda
-    setTimeout(() => {
-        mostrarMensagem(mensagemEsqueci, 'Funcionalidade em desenvolvimento.', 'erro');
-        botao.disabled = false;
-        botao.innerHTML = '<i class="ri-key-line"></i> Atualizar senha';
-    }, 1000);
 
+    try {
+      // Chama o Backend para trocar a senha no banco
+      const resposta = await fetch(`${API_URL}/api/auth/recuperar-senha`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email, novaSenha })
+      });
+
+      let dados;
+      try {
+        dados = await resposta.json();
+      } catch (e) {
+        throw new Error('Erro de comunicação com o servidor.');
+      }
+
+      if (!resposta.ok) {
+        throw new Error(dados.error || 'Não foi possível redefinir a senha.');
+      }
+
+      // Sucesso!
+      mostrarMensagem(mensagemEsqueci, 'Senha atualizada com sucesso!', 'sucesso');
+      formEsqueci.reset();
+      
+      // Redireciona para o login após 2 segundos
+      setTimeout(() => {
+          mostrarArea('login');
+          limparMensagem(mensagemEsqueci); 
+      }, 2000);
+
+    } catch (erro) {
+      if (erro.message.includes('Failed to fetch')) {
+        mostrarMensagem(mensagemEsqueci, 'Erro de conexão. Verifique sua internet.', 'erro');
+      } else {
+        mostrarMensagem(mensagemEsqueci, erro.message || 'Erro ao redefinir senha.', 'erro');
+      }
+    } finally {
+      botao.disabled = false;
+      botao.innerHTML = '<i class="ri-key-line"></i> Atualizar senha';
+    }
   });
 }

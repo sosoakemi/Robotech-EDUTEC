@@ -93,6 +93,14 @@ async function atualizarUsuario(id, dadosAtualizados) {
   return await buscarUsuarioPorId(id);
 }
 
+async function atualizarSenhaPorEmail(email, novaSenhaHash) {
+  const result = await query(
+    'UPDATE robotech_usuarios SET senha = ? WHERE email = ?',
+    [novaSenhaHash, email.toLowerCase()]
+  );
+  return result.affectedRows > 0;
+}
+
 async function deletarUsuario(id) {
   await query('DELETE FROM robotech_pontuacoes WHERE usuario_id = ?', [id]);
   
@@ -108,5 +116,6 @@ module.exports = {
   buscarUsuarioPorId,
   criarUsuario,
   atualizarUsuario,
-  deletarUsuario
+  deletarUsuario,
+  atualizarSenhaPorEmail
 };

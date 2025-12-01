@@ -176,6 +176,43 @@ exports.atualizarPerfil = async (req, res) => {
   }
 };
 
+// Função para recuperar a senha
+exports.recuperarSenha = async (req, res) => {
+  try {
+    const { email, novaSenha } = req.body;
+
+    if (!email || !novaSenha) {
+      return res.status(400).json({ error: 'Email e nova senha são obrigatórios' });
+    }
+
+    if (novaSenha.length < 6) {
+      return res.status(400).json({ error: 'A senha deve ter no mínimo 6 caracteres' });
+    }
+
+    // Verifica se o usuário existe
+    const user = await db.buscarUsuarioPorEmail(email);
+    if (!user) {
+      return res.status(404).json({ error: 'E-mail não encontrado no sistema.' });
+    }
+
+    // Criptografa a nova senha
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(novaSenha, salt);
+
+    // Atualiza no banco (Essa função precisa estar no db.js)
+    await db.atualizarSenhaPorEmail(email, hashedPassword);
+
+    res.json({ 
+      success: true, 
+      message: 'Senha redefinida com sucesso! Faça login agora.' 
+    });
+
+  } catch (error) {
+    console.error('Erro ao recuperar senha:', error);
+    res.status(500).json({ error: 'Erro interno ao redefinir senha' });
+  }
+};
+
 // @desc    Alterar senha
 exports.alterarSenha = async (req, res) => {
   try {
