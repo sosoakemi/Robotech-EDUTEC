@@ -1,5 +1,5 @@
-// CONFIGURAÇÃO GLOBAL DA API (Igual aos outros arquivos)
-const API_URL = (window.APIConfig && window.APIConfig.API_URL) || 'https://backend-edutec.onrender.com';
+// CORREÇÃO: Mudamos o nome para GAME_API_URL para não brigar com o ranking.js
+const GAME_API_URL = (window.APIConfig && window.APIConfig.API_URL) || 'https://backend-edutec.onrender.com';
 
 const cards = document.querySelectorAll(`.memory-card`);
 
@@ -193,7 +193,6 @@ function mostrarDicaQuest() {
 // FUNÇÃO DE SALVAR CORRIGIDA 🛠️
 // ----------------------------------------------------
 async function salvarPontuacao() {
-    // 1. Pega o token para autenticar
     const token = sessionStorage.getItem('token');
     
     if (!token) {
@@ -202,12 +201,12 @@ async function salvarPontuacao() {
     }
 
     try {
-        // 2. Rota Nova: /api/game/score (POST)
-        const resposta = await fetch(`${API_URL}/api/game/score`, {
+        // CORREÇÃO: Usando a nova variável GAME_API_URL
+        const resposta = await fetch(`${GAME_API_URL}/api/game/score`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}` // <--- Token Obrigatório
+                'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify({
                 jogo: 'coderobotech',
@@ -241,7 +240,6 @@ function proximoNivelQuest() {
         const btnExec = document.getElementById('botao-executar-quest');
         if (btnExec) btnExec.disabled = true;
         
-        // Chama a função de salvar corrigida
         salvarPontuacao();
         
         setTimeout(() => {
@@ -250,6 +248,7 @@ function proximoNivelQuest() {
     }
 }
 
+// Event Listeners (Eles voltarão a funcionar agora que o erro de variável sumiu)
 document.getElementById('botao-executar-quest').addEventListener('click', executarCodigoQuest);
 document.getElementById('botao-dica-quest').addEventListener('click', mostrarDicaQuest);
 document.getElementById('botao-proximo-quest').addEventListener('click', proximoNivelQuest);
