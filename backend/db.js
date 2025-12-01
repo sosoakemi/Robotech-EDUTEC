@@ -1,10 +1,11 @@
 const { query } = require('./lib/database'); 
 
-// Mapeamento: O código Javascript usa inglês, o Banco usa português.
-// Usamos "AS" no SQL para traduzir na volta.
+// ==========================================
+// VERSÃO MYSQL (Compatível com o servidor do professor)
+// ==========================================
 
 async function buscarTodosUsuarios() {
-  const res = await query(`
+  const rows = await query(`
     SELECT 
       id, 
       nome as name, 
@@ -12,12 +13,12 @@ async function buscarTodosUsuarios() {
       'student' as role, 
       null as avatar 
     FROM robotech_usuarios
-  `, []);
-  return res.rows;
+  `);
+  return rows;
 }
 
 async function buscarUsuarioPorEmail(email) {
-  const res = await query(`
+  const rows = await query(`
     SELECT 
       id, 
       nome as name, 
@@ -26,14 +27,14 @@ async function buscarUsuarioPorEmail(email) {
       'student' as role, 
       null as avatar 
     FROM robotech_usuarios 
-    WHERE email = $1
+    WHERE email = ?
   `, [email.toLowerCase()]);
   
-  return res.rows[0] || null;
+  return rows[0] || null;
 }
 
 async function buscarUsuarioPorId(id) {
-  const res = await query(`
+  const rows = await query(`
     SELECT 
       id, 
       nome as name, 
@@ -42,54 +43,50 @@ async function buscarUsuarioPorId(id) {
       'student' as role, 
       null as avatar 
     FROM robotech_usuarios 
-    WHERE id = $1
+    WHERE id = ?
   `, [id]);
   
-  return res.rows[0] || null;
+  return rows[0] || null;
 }
 
 async function criarUsuario(usuario) {
   const now = new Date();
   
-  // Nota: Não enviamos o ID, o banco cria sozinho (Serial/AutoIncrement)
-  // Usamos RETURNING id para saber qual número foi gerado
-  const res = await query(
-    `INSERT INTO robotech_usuarios (nome, email, senha, criado_em) 
-     VALUES ($1, $2, $3, $4) 
-     RETURNING id`,
+  // MySQL usa ? em vez de $1
+  const result = await query(
+    `INSERT INTO robotech_usuarios (nome, email, senha, criado_em) VALUES (?, ?, ?, ?)`,
     [usuario.name, usuario.email.toLowerCase(), usuario.password, now]
   );
   
-  const novoId = res.rows[0].id;
+  // MySQL retorna o ID assim:
+  const novoId = result.insertId;
+  
   return await buscarUsuarioPorId(novoId);
 }
 
 async function atualizarUsuario(id, dadosAtualizados) {
   const campos = [];
   const valores = [];
-  let contador = 1;
 
-  // Mapeamento Javascript -> Banco de Dados
   if (dadosAtualizados.name) {
-    campos.push(`nome = $${contador++}`);
+    campos.push('nome = ?');
     valores.push(dadosAtualizados.name);
   }
   if (dadosAtualizados.email) {
-    campos.push(`email = $${contador++}`);
+    campos.push('email = ?');
     valores.push(dadosAtualizados.email.toLowerCase());
   }
   if (dadosAtualizados.password) {
-    campos.push(`senha = $${contador++}`);
+    campos.push('senha = ?');
     valores.push(dadosAtualizados.password);
   }
 
-  // Se não tiver nada para atualizar, retorna o usuário atual
   if (campos.length === 0) return await buscarUsuarioPorId(id);
 
   valores.push(id);
   
   await query(
-    `UPDATE robotech_usuarios SET ${campos.join(', ')} WHERE id = $${contador}`, 
+    `UPDATE robotech_usuarios SET ${campos.join(', ')} WHERE id = ?`, 
     valores
   );
   
@@ -97,8 +94,8 @@ async function atualizarUsuario(id, dadosAtualizados) {
 }
 
 async function deletarUsuario(id) {
-  const res = await query('DELETE FROM robotech_usuarios WHERE id = $1', [id]);
-  return res.rowCount > 0;
+  const result = await query('DELETE FROM robotech_usuarios WHERE id = ?', [id]);
+  return result.affectedRows > 0;
 }
 
 module.exports = {

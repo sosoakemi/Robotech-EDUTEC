@@ -1,7 +1,12 @@
 (function () {
+  // Configuração inteligente da URL
   const loginUrl = document.body.dataset.loginUrl || 'autenticacao.html#login';
   const homeUrl = document.body.dataset.homeUrl || 'index.html';
-  const apiUrl = document.body.dataset.apiUrl || 'https://backend-edutec.onrender.com';
+  
+  // CORREÇÃO 1: Usar window.APIConfig se disponível
+  const apiUrl = (window.APIConfig && window.APIConfig.API_URL) || 
+                 document.body.dataset.apiUrl || 
+                 'https://backend-edutec.onrender.com';
 
   function obterLoginAbsoluto(alvo) {
     return new URL(alvo, window.location.href).href;
@@ -49,43 +54,73 @@
     }
     menu.dataset.visivel = 'true';
     setTimeout(() => menu.classList.add('menu-usuario--aberto'), 10);
+    
+    // Ação Voltar
     menu.querySelector('[data-acao="voltar"]').onclick = () => {
       window.location.href = new URL(homeUrl, window.location.href).href;
     };
+    
+    // Ação Sair
     menu.querySelector('[data-acao="sair"]').onclick = () => {
       if (confirm('Deseja sair da sua conta?')) {
         sessionStorage.removeItem('usuarioAtual');
+        sessionStorage.removeItem('token'); // Limpa o token também
         sessionStorage.removeItem('destinoProtegido');
         fecharMenuUsuario();
         window.location.href = new URL(homeUrl, window.location.href).href;
       }
     };
+
+    // CORREÇÃO 2: Ação Excluir (Atualizada para a nova API)
     menu.querySelector('[data-acao="excluir"]').onclick = async () => {
+      // 1. Confirmação simples
       if (!confirm('Tem certeza que deseja excluir sua conta? Esta ação não pode ser desfeita.')) {
         return;
       }
-      const usuario = obterUsuarioAtual();
-      if (!usuario.id) {
-        alert('Não foi possível identificar o usuário. Faça login novamente.');
-        return;
+      
+      // 2. Pegar o Token
+      const token = sessionStorage.getItem('token');
+      if (!token) {
+         alert('Erro de autenticação. Faça login novamente.');
+         return;
       }
+
+      // 3. Pedir a senha (obrigatório no novo backend)
+      const senha = prompt('Para confirmar a exclusão, digite sua senha:');
+      if (!senha) return; // Cancelou
+
       try {
-        const resposta = await fetch(`${apiUrl}/usuarios/${usuario.id}`, {
-          method: 'DELETE'
+        // 4. Requisição correta
+        const resposta = await fetch(`${apiUrl}/api/auth/conta`, {
+          method: 'DELETE',
+          headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}` // Token no cabeçalho
+          },
+          body: JSON.stringify({
+              senha: senha,
+              confirmacao: 'DELETAR' // Confirmação exigida pelo backend
+          })
         });
+
         const dados = await resposta.json();
+        
         if (!resposta.ok) {
-          throw new Error(dados.erro || 'Erro ao excluir conta.');
+          throw new Error(dados.error || dados.erro || 'Erro ao excluir conta.');
         }
+
         alert('Conta removida com sucesso. Sentiremos sua falta!');
-        sessionStorage.removeItem('usuarioAtual');
-        sessionStorage.removeItem('destinoProtegido');
+        
+        // Limpeza total
+        sessionStorage.clear();
         fecharMenuUsuario();
         window.location.href = new URL(homeUrl, window.location.href).href;
+
       } catch (erro) {
         alert(erro.message || 'Não foi possível excluir a conta agora.');
       }
     };
+    
     document.addEventListener('click', cliqueForaMenu);
   }
 
