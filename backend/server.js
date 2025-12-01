@@ -33,6 +33,7 @@ app.post('/api/auth/logout', authController.logout);
 app.put('/api/auth/perfil', protect, authController.atualizarPerfil);
 app.put('/api/auth/senha', protect, authController.alterarSenha);
 app.delete('/api/auth/conta', protect, authController.deletarConta);
+app.post('/api/auth/recuperar-senha', authController.recuperarSenha);
 
 // ==========================================
 // ROTAS DO JOGO (MySQL)
