@@ -94,7 +94,11 @@ async function atualizarUsuario(id, dadosAtualizados) {
 }
 
 async function deletarUsuario(id) {
+  await query('DELETE FROM robotech_pontuacoes WHERE usuario_id = ?', [id]);
+  
+  // 2. Agora sim: Removemos o usuário
   const result = await query('DELETE FROM robotech_usuarios WHERE id = ?', [id]);
+  
   return result.affectedRows > 0;
 }
 
