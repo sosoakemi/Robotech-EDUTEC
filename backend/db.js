@@ -37,17 +37,32 @@ async function buscarUsuarioPorId(id) {
 
 async function criarUsuario(usuario) {
   const now = new Date();
+  console.log('1. Iniciando criarUsuario...');
+  console.log('2. Dados:', usuario.email);
+
+  try {
+    // Tenta inserir
+    const result = await query(
+      `INSERT INTO robotech_usuarios (nome, email, senha, criado_em) VALUES (?, ?, ?, ?)`,
+      [usuario.name, usuario.email.toLowerCase(), usuario.password, now]
+    );
+
+    console.log('3. Resultado do Banco:', result);
+    
+    // Verifica se gerou ID
+    if (!result.insertId) {
+        console.error('❌ PERIGO: O banco respondeu sucesso, mas NÃO gerou ID!');
+    } else {
+        console.log('✅ SUCESSO! ID Gerado:', result.insertId);
+    }
   
-  // AVISO: A coluna senha deve ser VARCHAR(255) para caber o hash
-  const result = await query(
-    `INSERT INTO robotech_usuarios (nome, email, senha, criado_em) VALUES (?, ?, ?, ?)`,
-    [usuario.name, usuario.email.toLowerCase(), usuario.password, now]
-  );
-  
-  // Pega o ID que o banco acabou de criar (Auto Increment)
-  const novoId = result.insertId;
-  
-  return await buscarUsuarioPorId(novoId);
+    const novoId = result.insertId;
+    return await buscarUsuarioPorId(novoId);
+
+  } catch (e) {
+    console.error('❌ ERRO DENTRO DE criarUsuario:', e);
+    throw e;
+  }
 }
 
 // ==========================================
