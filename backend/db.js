@@ -1,70 +1,99 @@
-const { query } = require('./lib/mysql');
-const { randomUUID } = require('crypto');
-
-// Mapeamento entre o modelo antigo (JSON) e a tabela MySQL
-// Tabela users sugerida:
-// id (VARCHAR(36) PK), name VARCHAR(255), email VARCHAR(255) UNIQUE,
-// password VARCHAR(255), role VARCHAR(50), avatar TEXT NULL,
-// is_active TINYINT(1) DEFAULT 1, created_at DATETIME, last_login DATETIME NULL
+const { query } = require('./lib/database');
+const { randomUUID } = require('crypto'); // Se o ID for INT no banco, não vamos usar isso.
 
 async function buscarTodosUsuarios() {
-  const rows = await query('SELECT id, name, email, role, avatar, is_active AS isActive, created_at AS createdAt, last_login AS lastLogin FROM users', []);
+  const rows = await query(`
+    SELECT 
+      id, 
+      nome as name, 
+      email, 
+      'student' as role, 
+      null as avatar 
+    FROM robotech_usuarios
+  `);
   return rows;
 }
 
 async function buscarUsuarioPorEmail(email) {
-  const rows = await query('SELECT id, name, email, password, role, avatar, is_active AS isActive, created_at AS createdAt, last_login AS lastLogin FROM users WHERE email = ?', [email.toLowerCase()]);
+  const rows = await query(`
+    SELECT 
+      id, 
+      nome as name, 
+      email, 
+      senha as password, 
+      'student' as role, 
+      null as avatar 
+    FROM robotech_usuarios 
+    WHERE email = ?
+  `, [email.toLowerCase()]);
+  
   return rows[0] || null;
 }
 
 async function buscarUsuarioPorId(id) {
-  const rows = await query('SELECT id, name, email, password, role, avatar, is_active AS isActive, created_at AS createdAt, last_login AS lastLogin FROM users WHERE id = ?', [id]);
+  const rows = await query(`
+    SELECT 
+      id, 
+      nome as name, 
+      email, 
+      senha as password, 
+      'student' as role, 
+      null as avatar 
+    FROM robotech_usuarios 
+    WHERE id = ?
+  `, [id]);
+  
   return rows[0] || null;
 }
 
 async function criarUsuario(usuario) {
-  const id = randomUUID();
   const now = new Date();
-  await query(
-    'INSERT INTO users (id, name, email, password, role, avatar, is_active, created_at, last_login) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-    [id, usuario.name, usuario.email.toLowerCase(), usuario.password, usuario.role || 'student', usuario.avatar || null, 1, now, null]
+  
+  // MySQL: Usamos 'INSERT' normal. O ID é gerado automaticamente (Auto Increment)
+  const result = await query(
+    `INSERT INTO robotech_usuarios (nome, email, senha, criado_em) VALUES (?, ?, ?, ?)`,
+    [usuario.name, usuario.email.toLowerCase(), usuario.password, now]
   );
-  const inserted = await buscarUsuarioPorId(id);
-  return inserted;
+  
+  // No MySQL, pegamos o ID gerado assim:
+  const novoId = result.insertId;
+  
+  return await buscarUsuarioPorId(novoId);
 }
 
 async function atualizarUsuario(id, dadosAtualizados) {
   const campos = [];
   const valores = [];
 
-  const mapping = {
-    name: 'name',
-    email: 'email',
-    password: 'password',
-    role: 'role',
-    avatar: 'avatar',
-    isActive: 'is_active',
-    lastLogin: 'last_login'
-  };
-
-  Object.keys(dadosAtualizados).forEach((k) => {
-    if (mapping[k] !== undefined) {
-      campos.push(`${mapping[k]} = ?`);
-      if (k === 'email') valores.push(String(dadosAtualizados[k]).toLowerCase());
-      else valores.push(dadosAtualizados[k]);
-    }
-  });
+  // Mapeamento Javascript -> MySQL (Português)
+  if (dadosAtualizados.name) {
+    campos.push('nome = ?');
+    valores.push(dadosAtualizados.name);
+  }
+  if (dadosAtualizados.email) {
+    campos.push('email = ?');
+    valores.push(dadosAtualizados.email.toLowerCase());
+  }
+  if (dadosAtualizados.password) {
+    campos.push('senha = ?');
+    valores.push(dadosAtualizados.password);
+  }
 
   if (campos.length === 0) return await buscarUsuarioPorId(id);
 
   valores.push(id);
-  await query(`UPDATE users SET ${campos.join(', ')} WHERE id = ?`, valores);
+  
+  await query(
+    `UPDATE robotech_usuarios SET ${campos.join(', ')} WHERE id = ?`, 
+    valores
+  );
+  
   return await buscarUsuarioPorId(id);
 }
 
 async function deletarUsuario(id) {
-  const res = await query('DELETE FROM users WHERE id = ?', [id]);
-  return res.affectedRows > 0;
+  const result = await query('DELETE FROM robotech_usuarios WHERE id = ?', [id]);
+  return result.affectedRows > 0;
 }
 
 module.exports = {
@@ -74,5 +103,4 @@ module.exports = {
   criarUsuario,
   atualizarUsuario,
   deletarUsuario
-};
-
+}
