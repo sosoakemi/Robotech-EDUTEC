@@ -1,4 +1,5 @@
-const API_URL = 'https://backend-edutec.onrender.com';
+// CORREÇÃO 1: Usa a configuração global (api-config.js) se existir, ou o link direto
+const API_URL = (window.APIConfig && window.APIConfig.API_URL) || 'https://backend-edutec.onrender.com';
 
 const abas = document.querySelectorAll('.aba');
 const areas = document.querySelectorAll('.area-formulario');
@@ -62,6 +63,9 @@ function limparMensagem(elemento) {
   elemento.className = 'mensagem';
 }
 
+// ----------------------------------------------------
+// LOGIN
+// ----------------------------------------------------
 if (formLogin) {
   formLogin.addEventListener('submit', async (evento) => {
     evento.preventDefault();
@@ -75,12 +79,14 @@ if (formLogin) {
     botao.innerHTML = '<i class="ri-loader-4-line ri-spin"></i> Entrando...';
 
     try {
-      const resposta = await fetch(`${API_URL}/login`, {
+      // CORREÇÃO 2: Rota atualizada para /api/auth/login
+      const resposta = await fetch(`${API_URL}/api/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ email, senha })
+        // CORREÇÃO 3: Enviando "password" em vez de "senha"
+        body: JSON.stringify({ email, password: senha }) 
       });
 
       let dados;
@@ -91,11 +97,20 @@ if (formLogin) {
       }
 
       if (!resposta.ok) {
-        throw new Error(dados.erro || 'Não foi possível entrar.');
+        throw new Error(dados.error || dados.erro || 'Não foi possível entrar.');
       }
 
       mostrarMensagem(mensagemLogin, 'Login realizado com sucesso!', 'sucesso');
-      sessionStorage.setItem('usuarioAtual', JSON.stringify(dados.usuario));
+      
+      // O backend novo devolve { data: { token, ... } }
+      // Ajustamos para salvar o objeto correto
+      const usuarioParaSalvar = dados.data || dados.usuario || dados;
+      sessionStorage.setItem('usuarioAtual', JSON.stringify(usuarioParaSalvar));
+      
+      // Se tiver token, salva separado também para facilitar
+      if(usuarioParaSalvar.token) {
+        sessionStorage.setItem('token', usuarioParaSalvar.token);
+      }
 
       const destino = sessionStorage.getItem('destinoProtegido');
       if (destino) {
@@ -106,8 +121,8 @@ if (formLogin) {
         window.location.href = destino || 'index.html';
       }, 600);
     } catch (erro) {
-      if (erro.message.includes('Failed to fetch') || erro.message.includes('NetworkError') || erro.message.includes('load failed')) {
-        mostrarMensagem(mensagemLogin, 'Não foi possível conectar ao servidor. Verifique se o backend está rodando na porta 5001.', 'erro');
+      if (erro.message.includes('Failed to fetch') || erro.message.includes('NetworkError')) {
+        mostrarMensagem(mensagemLogin, 'Erro de conexão. O servidor pode estar offline.', 'erro');
       } else {
         mostrarMensagem(mensagemLogin, erro.message || 'Erro ao realizar login.', 'erro');
       }
@@ -118,6 +133,9 @@ if (formLogin) {
   });
 }
 
+// ----------------------------------------------------
+// CADASTRO
+// ----------------------------------------------------
 if (formCadastro) {
   formCadastro.addEventListener('submit', async (evento) => {
     evento.preventDefault();
@@ -139,32 +157,43 @@ if (formCadastro) {
     botao.innerHTML = '<i class="ri-loader-4-line ri-spin"></i> Criando...';
 
     try {
-      const resposta = await fetch(`${API_URL}/usuarios`, {
+      // CORREÇÃO 4: Rota atualizada para /api/auth/register
+      const resposta = await fetch(`${API_URL}/api/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ nome, email, senha })
+        // CORREÇÃO 5: Traduzindo chaves para o backend (name, password)
+        body: JSON.stringify({ name: nome, email, password: senha })
       });
+
+      // Tratamento especial para erro 409 (Email duplicado)
+      if (resposta.status === 409) {
+         throw new Error('Este e-mail já está cadastrado. Tente fazer login.');
+      }
 
       let dados;
       try {
         dados = await resposta.json();
       } catch (parseErro) {
-        throw new Error('Servidor não respondeu corretamente. Verifique se o backend está rodando.');
+        throw new Error('Servidor não respondeu JSON válido.');
       }
 
       if (!resposta.ok) {
-        throw new Error(dados.erro || 'Não foi possível criar a conta.');
+        throw new Error(dados.error || dados.erro || 'Não foi possível criar a conta.');
       }
 
       mostrarMensagem(mensagemCadastro, 'Conta criada com sucesso! Você já pode entrar.', 'sucesso');
       formCadastro.reset();
 
-      mostrarArea('login');
+      // Aguarda um pouco e muda para a aba de login
+      setTimeout(() => {
+          mostrarArea('login');
+      }, 1500);
+
     } catch (erro) {
-      if (erro.message.includes('Failed to fetch') || erro.message.includes('NetworkError') || erro.message.includes('load failed')) {
-        mostrarMensagem(mensagemCadastro, 'Não foi possível conectar ao servidor. Verifique se o backend está rodando na porta 5001.', 'erro');
+      if (erro.message.includes('Failed to fetch')) {
+        mostrarMensagem(mensagemCadastro, 'Erro de conexão com o servidor.', 'erro');
       } else {
         mostrarMensagem(mensagemCadastro, erro.message || 'Erro ao criar conta.', 'erro');
       }
@@ -178,7 +207,7 @@ if (formCadastro) {
 if (formEsqueci) {
   formEsqueci.addEventListener('submit', async (evento) => {
     evento.preventDefault();
-
+    
     const email = document.getElementById('esqueciEmail').value.trim();
     const novaSenha = document.getElementById('esqueciNovaSenha').value.trim();
     const confirmacao = document.getElementById('esqueciConfirmacao').value.trim();
@@ -193,39 +222,13 @@ if (formEsqueci) {
 
     botao.disabled = true;
     botao.innerHTML = '<i class="ri-loader-4-line ri-spin"></i> Atualizando...';
+    
+    // Simulando delay pois não temos a rota ainda
+    setTimeout(() => {
+        mostrarMensagem(mensagemEsqueci, 'Funcionalidade em desenvolvimento.', 'erro');
+        botao.disabled = false;
+        botao.innerHTML = '<i class="ri-key-line"></i> Atualizar senha';
+    }, 1000);
 
-    try {
-      const resposta = await fetch(`${API_URL}/recuperar-senha`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ email, novaSenha })
-      });
-
-      let dados;
-      try {
-        dados = await resposta.json();
-      } catch (parseErro) {
-        throw new Error('Servidor não respondeu corretamente. Verifique se o backend está rodando.');
-      }
-
-      if (!resposta.ok) {
-        throw new Error(dados.erro || 'Não foi possível redefinir a senha.');
-      }
-
-      mostrarMensagem(mensagemEsqueci, 'Senha atualizada! Faça login com a nova senha.', 'sucesso');
-      formEsqueci.reset();
-      mostrarArea('login');
-    } catch (erro) {
-      if (erro.message.includes('Failed to fetch') || erro.message.includes('NetworkError') || erro.message.includes('load failed')) {
-        mostrarMensagem(mensagemEsqueci, 'Não foi possível conectar ao servidor. Verifique se o backend está rodando na porta 5001.', 'erro');
-      } else {
-        mostrarMensagem(mensagemEsqueci, erro.message || 'Erro ao redefinir senha.', 'erro');
-      }
-    } finally {
-      botao.disabled = false;
-      botao.innerHTML = '<i class="ri-key-line"></i> Atualizar senha';
-    }
   });
 }
