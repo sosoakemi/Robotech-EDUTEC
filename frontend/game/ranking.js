@@ -1,4 +1,6 @@
-const API_URL = document.body.getAttribute('data-api-url') || 'https://backend-edutec.onrender.com';
+// 1. Tenta pegar a configuração global (api-config.js)
+// 2. Se falhar, usa o link do Render como segurança
+const API_URL = (window.APIConfig && window.APIConfig.API_URL) || 'https://backend-edutec.onrender.com';
 
 const botaoRanking = document.getElementById('botao-ranking');
 const modalRanking = document.getElementById('modal-ranking');
