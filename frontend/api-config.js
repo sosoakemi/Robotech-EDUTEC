@@ -2,8 +2,8 @@
 (function() {
   'use strict';
 
-  const DEFAULT_DEV_API_URL = 'https://backend-edutec-pi.vercel.app';
-  const DEFAULT_PROD_API_URL = '';
+  const DEFAULT_DEV_API_URL = 'https://backend-edutec.onrender.com';
+  const DEFAULT_PROD_API_URL = 'https://backend-edutec.onrender.com';
 
   function isProduction() {
     if (typeof window === 'undefined' || !window.location) {

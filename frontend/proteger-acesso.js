@@ -1,7 +1,7 @@
 (function () {
   const loginUrl = document.body.dataset.loginUrl || 'autenticacao.html#login';
   const homeUrl = document.body.dataset.homeUrl || 'index.html';
-  const apiUrl = document.body.dataset.apiUrl || 'https://backend-edutec-pi.vercel.app';
+  const apiUrl = document.body.dataset.apiUrl || 'https://backend-edutec.onrender.com';
 
   function obterLoginAbsoluto(alvo) {
     return new URL(alvo, window.location.href).href;

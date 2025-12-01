@@ -1,4 +1,4 @@
-const API_URL = 'https://backend-edutec-pi.vercel.app';
+const API_URL = 'https://backend-edutec.onrender.com';
 
 const abas = document.querySelectorAll('.aba');
 const areas = document.querySelectorAll('.area-formulario');

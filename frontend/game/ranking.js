@@ -1,4 +1,4 @@
-const API_URL = document.body.getAttribute('data-api-url') || 'http://localhost:5001';
+const API_URL = document.body.getAttribute('data-api-url') || 'https://backend-edutec.onrender.com';
 
 const botaoRanking = document.getElementById('botao-ranking');
 const modalRanking = document.getElementById('modal-ranking');

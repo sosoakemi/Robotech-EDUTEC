@@ -200,7 +200,7 @@ cards.forEach(card => card.addEventListener(`click`, flipCard));
                 return;
             }
 
-            const API_URL = document.body.getAttribute('data-api-url') || 'http://localhost:5001';
+            const API_URL = document.body.getAttribute('data-api-url') || 'https://backend-edutec.onrender.com';
             
             try {
                 const resposta = await fetch(`${API_URL}/usuarios/${usuarioAtual.id}/jogos`, {

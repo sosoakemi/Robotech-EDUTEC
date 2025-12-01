@@ -16,7 +16,7 @@
   function getApiUrl() {
     // Em produção (Vercel), usa a URL do seu backend hospedado
     if (isProduction()) {
-      return 'https://backend-six-rho-46.vercel.app';
+      return 'https://backend-edutec.onrender.com';
     }
     // Em desenvolvimento, usa o backend local
     return 'http://localhost:5001';
