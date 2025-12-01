@@ -1,5 +1,4 @@
 const db = require('../db');
-// CORREÇÃO 1: Aponta para o arquivo certo
 const { query } = require('../lib/database'); 
 
 // @desc    Salvar pontuação do jogo
@@ -18,16 +17,14 @@ exports.salvarPontuacao = async (req, res) => {
       return res.status(400).json({ error: 'Pontuação é obrigatória' });
     }
 
-    // Verificar usuário
     const user = await db.buscarUsuarioPorId(userId);
     if (!user) {
       return res.status(404).json({ error: 'Usuário não encontrado' });
     }
 
-    // CORREÇÃO 2: Usar a tabela e colunas REAIS do banco (robotech_pontuacoes)
-    // Nota: A tabela não tem coluna 'jogo', 'tempo' ou 'nivel', então salvamos só os pontos.
     const now = new Date();
     
+    // Insere na tabela real (robotech_pontuacoes)
     const result = await query(
       'INSERT INTO robotech_pontuacoes (usuario_id, pontos, data_partida) VALUES (?, ?, ?)',
       [userId, parseInt(pontuacao), now]
@@ -35,7 +32,7 @@ exports.salvarPontuacao = async (req, res) => {
 
     const insertedId = result.insertId;
 
-    // Estatísticas básicas (Adaptado para a tabela real)
+    // Estatísticas básicas
     const [stats] = await query(
       `SELECT 
         COUNT(*) AS totalJogos, 
@@ -76,9 +73,11 @@ exports.obterPontuacoes = async (req, res) => {
     const userId = req.user.id;
     const { limite = 10 } = req.query;
 
+    // Garante que é número inteiro
     const limit = Math.max(1, Math.min(parseInt(limite), 100));
 
-    // CORREÇÃO 3: Select na tabela certa
+    // CORREÇÃO: Usamos ${limit} direto na string em vez de ?
+    // Isso evita o erro "Incorrect arguments" do MySQL
     const rows = await query(
       `SELECT 
         id, 
@@ -88,8 +87,8 @@ exports.obterPontuacoes = async (req, res) => {
        FROM robotech_pontuacoes 
        WHERE usuario_id = ? 
        ORDER BY pontos DESC, data_partida DESC 
-       LIMIT ?`,
-      [userId, limit]
+       LIMIT ${limit}`, 
+      [userId] // Removemos o limit daqui, pois já está no texto acima
     );
 
     res.json({
@@ -113,7 +112,7 @@ exports.obterRanking = async (req, res) => {
     const { limite = 10 } = req.query;
     const limit = Math.max(1, Math.min(parseInt(limite), 200));
 
-    // CORREÇÃO 4: Join entre robotech_pontuacoes e robotech_usuarios
+    // CORREÇÃO: Usamos ${limit} direto na string em vez de ?
     const rows = await query(
       `SELECT 
         p.id, 
@@ -124,8 +123,8 @@ exports.obterRanking = async (req, res) => {
        FROM robotech_pontuacoes p
        JOIN robotech_usuarios u ON u.id = p.usuario_id
        ORDER BY p.pontos DESC
-       LIMIT ?`,
-      [limit]
+       LIMIT ${limit}`,
+      [] // Array vazio, pois não usamos ? nesta query
     );
 
     res.json({
@@ -137,7 +136,10 @@ exports.obterRanking = async (req, res) => {
 
   } catch (error) {
     console.error('Erro ao obter ranking:', error);
-    res.status(500).json({ error: 'Erro ao obter ranking' });
+    res.status(500).json({ 
+        error: 'Erro ao obter ranking', 
+        details: error.message 
+    });
   }
 };
 
@@ -148,7 +150,6 @@ exports.obterEstatisticas = async (req, res) => {
   try {
     const userId = req.user.id;
 
-    // Estatísticas agregadas
     const [stats] = await query(
       `SELECT 
         COUNT(*) AS totalJogos, 
